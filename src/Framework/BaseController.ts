@@ -1,4 +1,4 @@
-﻿namespace JJustinCredible.TheWeekControllers {
+﻿namespace JustinCredible.TheWeek.Controllers {
 
     /**
      * This is the base controller that all other controllers should utilize.

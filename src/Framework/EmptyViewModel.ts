@@ -1,4 +1,4 @@
-﻿namespace JJustinCredible.TheWeekViewModels {
+﻿namespace JustinCredible.TheWeek.ViewModels {
 
     /**
      * A ViewModel that has no properties. Useful for controllers that

@@ -1,4 +1,4 @@
-﻿namespace JJustinCredible.TheWeekModels {
+﻿namespace JustinCredible.TheWeek.Models {
 
     export class LogEntry {
         public id: string;

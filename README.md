@@ -1,4 +1,4 @@
-Unofficial app for The Week magazine
+Unofficial app for _The Week_ magazine
 ===
 
 This is an unofficial app for _[The Week](https://theweek.com/)_ magazine.

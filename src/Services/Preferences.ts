@@ -1,4 +1,4 @@
-﻿namespace JJustinCredible.TheWeekServices {
+﻿namespace JustinCredible.TheWeek.Services {
 
     /**
      * Provides a way to easily get/set user preferences.

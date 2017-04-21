@@ -1,4 +1,4 @@
-﻿namespace JJustinCredible.TheWeekDirectives {
+﻿namespace JustinCredible.TheWeek.Directives {
 
     //#region TypeScript Declarations
 

@@ -1,4 +1,4 @@
-﻿namespace JJustinCredible.TheWeekDirectives {
+﻿namespace JustinCredible.TheWeek.Directives {
 
     /**
      * Describes what our element directive objects look like.

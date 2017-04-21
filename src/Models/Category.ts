@@ -1,4 +1,4 @@
-﻿namespace JJustinCredible.TheWeekModels {
+﻿namespace JustinCredible.TheWeek.Models {
 
     export class Category {
         public name: string;

@@ -1,4 +1,4 @@
-﻿namespace JJustinCredible.TheWeekViewModels {
+﻿namespace JustinCredible.TheWeek.ViewModels {
 
     export class PinEntryViewModel {
         public pin: string;

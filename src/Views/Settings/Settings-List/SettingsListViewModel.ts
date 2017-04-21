@@ -1,4 +1,4 @@
-﻿namespace JJustinCredible.TheWeekViewModels {
+﻿namespace JustinCredible.TheWeek.ViewModels {
 
     export class SettingsListViewModel {
         public isDebugMode: boolean;

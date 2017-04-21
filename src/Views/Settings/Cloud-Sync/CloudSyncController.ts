@@ -1,4 +1,4 @@
-﻿namespace JJustinCredible.TheWeekControllers {
+﻿namespace JustinCredible.TheWeek.Controllers {
 
     export class CloudSyncController extends BaseController<ViewModels.CloudSyncViewModel> {
 

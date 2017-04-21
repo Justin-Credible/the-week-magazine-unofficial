@@ -1,4 +1,4 @@
-﻿namespace JJustinCredible.TheWeekModels {
+﻿namespace JustinCredible.TheWeek.Models {
 
     /**
      * Used to specify options for a dialog.

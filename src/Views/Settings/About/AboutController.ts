@@ -1,4 +1,4 @@
-﻿namespace JJustinCredible.TheWeekControllers {
+﻿namespace JustinCredible.TheWeek.Controllers {
 
     export class AboutController extends BaseController<ViewModels.AboutViewModel> {
 

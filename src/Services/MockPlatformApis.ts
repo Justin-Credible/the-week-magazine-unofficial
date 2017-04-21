@@ -1,4 +1,4 @@
-﻿namespace JJustinCredible.TheWeekServices {
+﻿namespace JustinCredible.TheWeek.Services {
 
     /**
      * Provides mock implementation APIs that may not be available on all platforms.

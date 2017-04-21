@@ -1,4 +1,4 @@
-﻿namespace JJustinCredible.TheWeekServices {
+﻿namespace JustinCredible.TheWeek.Services {
 
     /**
      * Provides a common set of helper/utility methods.

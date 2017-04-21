@@ -1,4 +1,4 @@
-﻿namespace JJustinCredible.TheWeekServices {
+﻿namespace JustinCredible.TheWeek.Services {
 
     /**
      * This is a custom interceptor for Angular's $httpProvider.

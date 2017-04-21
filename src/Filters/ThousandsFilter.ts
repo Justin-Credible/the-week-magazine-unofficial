@@ -1,4 +1,4 @@
-﻿namespace JJustinCredible.TheWeekFilters {
+﻿namespace JustinCredible.TheWeek.Filters {
 
     /**
      * Formats numbers greater than one thousand to include the K suffix.
