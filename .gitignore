@@ -1,0 +1,28 @@
+# Specifies intentionally untracked files to ignore when using Git
+# http://git-scm.com/docs/gitignore
+
+# Toolchain
+/node_modules
+/bower_components
+/platforms
+/plugins
+/typings/*
+!/typings/custom/
+/typings-tests/*
+!/typings-tests/custom/
+/docs-output
+
+# Development Artifacts
+/config.xml
+/www/index.html
+/www/lib
+/www/js/bundle.*
+/www/js/build-vars.js
+/www/js/templates.js
+/www/js/src/
+/www/css/bundle.*
+/src/tsd.d.ts
+/tests/tsd.d.ts
+/build
+/tests/**/*.js
+/tests/**/*.map
