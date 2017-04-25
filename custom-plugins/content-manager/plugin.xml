@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+           id="content-manager"
+      version="1.0.0">
+
+    <name>Content Manager Plugin</name>
+
+    <description>
+        Used for downloading issues and articles.
+    </description>
+
+    <license>MIT</license>
+
+    <platform name="android">
+
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="ContentManagerPlugin">
+                <param name="android-package" value="net.justin_credible.theweek.ContentManagerPlugin" />
+            </feature>
+        </config-file>
+
+        <js-module src="www/content-manager.js" name="ContentManagerPlugin">
+            <clobbers target="ContentManagerPlugin" />
+        </js-module>
+
+        <!-- Our Plugin Source -->
+        <source-file src="src/android/ContentManagerPlugin.java" target-dir="src/net/justin_credible/theweek" />
+
+    </platform>
+
+</plugin>

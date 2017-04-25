@@ -49,6 +49,7 @@
     "test": "gulp test"
   },
   "cordovaPlugins": [
+    "custom-plugins/content-manager",
     "cordova-plugin-device@1.0.1",
     "cordova-plugin-console@1.0.1",
     "cordova-plugin-whitelist@1.0.0",

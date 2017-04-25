@@ -105,6 +105,18 @@ namespace JustinCredible.TheWeek.Services {
             }
         }
 
+        /**
+         * Exposes the Content Manager for working with issue data.
+         */
+        get contentManager(): ContentManagerPlugin.ContentManagerPluginStatic {
+            if (typeof(ContentManagerPlugin) !== "undefined" && cordova.plugins && cordova.plugins.Keyboard) {
+                return ContentManagerPlugin;
+            }
+            else {
+                return this.MockPlatformApis.getContentManagerPlugin();
+            }
+        }
+
         //#endregion
     }
 }
