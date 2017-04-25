@@ -45,6 +45,17 @@ ContentManagerPlugin.downloadIssue = function downloadIssue(id, successCallback,
 };
 
 /**
+ * Used to cancel the current background download.
+ * 
+ * @param [function] successCallback - The success callback for this asynchronous function.
+ * @param [function] failureCallback - The failure callback for this asynchronous function; receives an error string.
+ */
+ContentManagerPlugin.cancelDownload = function cancelDownload(successCallback, failureCallback) {
+
+    exec(successCallbackWrapper, failureCallback, PLUGIN_ID, "cancelDownload", [ id ]);
+};
+
+/**
  * Used to check the background download status.
  * 
  * @param [function] successCallback - The success callback for this asynchronous function.

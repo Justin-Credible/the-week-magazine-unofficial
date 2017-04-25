@@ -24,6 +24,14 @@ declare module ContentManagerPlugin {
         downloadIssue(id: string, successCallback: () => void, failureCallback: (error: string) => void): void;
 
         /**
+         * Used to cancel the current background download.
+         * 
+         * @param successCallback The callback to be executed when the call completes successfully.
+         * @param failureCallback The callback to be executed when the call fails.
+         */
+        cancelDownload(successCallback: () => void, failureCallback: (error: string) => void): void;
+
+        /**
          * Used to check the background download status.
          * 
          * @param successCallback The callback to be executed when the call completes successfully.

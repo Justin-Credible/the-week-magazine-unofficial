@@ -1,17 +1,5 @@
 package net.justin_credible.theweek;
 
-import android.content.Context;
-import android.content.Intent;
-import android.support.v4.app.NotificationManagerCompat;
-
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Logger;
-import com.google.android.gms.analytics.Tracker;
-import com.google.android.gms.analytics.ecommerce.Product;
-import com.google.android.gms.analytics.ecommerce.ProductAction;
-import com.google.android.gms.analytics.ecommerce.Promotion;
-
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.json.JSONArray;
@@ -22,6 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class ContentManagerPlugin extends CordovaPlugin {
+
+    private DownloadTask currentDownloadTask;
+    private DownloadStatus currentDownloadStatus = new DownloadStatus();
 
     //region Plugin Entry Point
 
@@ -50,6 +41,17 @@ public final class ContentManagerPlugin extends CordovaPlugin {
             }
             catch (Exception exception) {
                 callbackContext.error("ContentManagerPlugin.downloadIssue() uncaught exception: " + exception.getMessage());
+            }
+
+            return true;
+        }
+        else if (action.equals("cancelDownload")) {
+
+            try {
+                this.cancelDownload(args, callbackContext);
+            }
+            catch (Exception exception) {
+                callbackContext.error("ContentManagerPlugin.cancelDownload() uncaught exception: " + exception.getMessage());
             }
 
             return true;
@@ -99,22 +101,83 @@ public final class ContentManagerPlugin extends CordovaPlugin {
 
     private synchronized void getDownloadedIssues(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
 
-        // Map<String, Object> resultMap = new HashMap<String, Object>();
-        // resultMap.put("android", nestedResultMap);
-
-        // callbackContext.success(new JSONObject(resultMap));
-
         callbackContext.error("TODO: Not implemented.");
     }
 
     private synchronized void downloadIssue(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
 
-        callbackContext.error("TODO: Not implemented.");
+        if (currentDownloadTask != null) {
+            callbackContext.error("Another download is already in progress.");
+            return;
+        }
+
+        String id = args.getString(0);
+
+        // Create an initial status so there is something to return if the client queries for
+        // the status before the download task has gotten to do any work.
+        currentDownloadStatus = new DownloadStatus();
+        currentDownloadStatus.inProgress = true;
+        currentDownloadStatus.id = id;
+        currentDownloadStatus.statusText = "Starting";
+        currentDownloadStatus.percentage = 0;
+
+        currentDownloadTask = new DownloadTask() {
+
+            @Override
+            protected void onProgressUpdate(DownloadStatus... status) {
+                currentDownloadStatus = status[0];
+            }
+
+            @Override
+            protected void onPostExecute(Boolean success) {
+                currentDownloadTask = null;
+                currentDownloadStatus = new DownloadStatus();
+            }
+
+            @Override
+            protected void onCancelled() {
+                currentDownloadTask = null;
+                currentDownloadStatus = new DownloadStatus();
+            }
+        };
+
+        try {
+            currentDownloadTask.execute(id);
+        }
+        catch (Exception exception) {
+
+            currentDownloadTask = null;
+            currentDownloadStatus = new DownloadStatus();
+
+            callbackContext.error("An error occurred while starting the download: " + exception.getMessage());
+
+            return;
+        }
+
+        callbackContext.success();
+    }
+
+    private synchronized void cancelDownload(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+
+        if (currentDownloadTask == null) {
+            callbackContext.error("A download is not currently in progress.");
+            return;
+        }
+
+        currentDownloadTask.cancel(true);
+
+        callbackContext.success();
     }
 
     private synchronized void getDownloadStatus(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
 
-        callbackContext.error("TODO: Not implemented.");
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        resultMap.put("inProgress", currentDownloadStatus.inProgress);
+        resultMap.put("id", currentDownloadStatus.id);
+        resultMap.put("statusText", currentDownloadStatus.statusText);
+        resultMap.put("percentage", currentDownloadStatus.percentage);
+
+        callbackContext.success(new JSONObject(resultMap));
     }
 
     private synchronized void deleteIssue(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
