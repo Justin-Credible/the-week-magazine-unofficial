@@ -12,6 +12,7 @@ namespace JustinCredible.TheWeek {
                 "$rootScope",
                 "$window",
                 "$location",
+                "$state",
                 "$ionicHistory",
                 Services.Plugins.ID,
                 Services.Platform.ID,
@@ -19,7 +20,6 @@ namespace JustinCredible.TheWeek {
                 Services.UIHelper.ID,
                 Services.Configuration.ID,
                 Services.Logger.ID,
-                Services.MenuDataSource.ID,
             ];
         }
 
@@ -27,14 +27,14 @@ namespace JustinCredible.TheWeek {
             private $rootScope: ng.IRootScopeService,
             private $window: ng.IWindowService,
             private $location: ng.ILocationService,
+            private $state: angular.ui.IStateService,
             private $ionicHistory: ionic.navigation.IonicHistoryService,
             private Plugins: Services.Plugins,
             private Platform: Services.Platform,
             private Compatibility: Services.Compatibility,
             private UIHelper: Services.UIHelper,
             private Configuration: Services.Configuration,
-            private Logger: Services.Logger,
-            private MenuDataSource: Services.MenuDataSource) {
+            private Logger: Services.Logger) {
         }
 
         //#endregion
@@ -51,12 +51,6 @@ namespace JustinCredible.TheWeek {
          * This flag is updated via the pause and resume handlers.
          */
         private _appIsInBackground: boolean = false;
-
-        /**
-         * Keeps track of whether or not the PIN prompt or not.
-         * This flag is updated via the device_pause and device_resume events.
-         */
-        private _isShowingPinPrompt: boolean = false;
 
         //#endregion
 
@@ -107,12 +101,6 @@ namespace JustinCredible.TheWeek {
          */
         private pause(): void {
             this._appIsInBackground = true;
-
-            if (!this._isShowingPinPrompt) {
-                // Store the current date/time. This will be used to determine if we need to
-                // show the PIN lock screen the next time the application is resumed.
-                this.Configuration.lastPausedAt = moment();
-            }
         }
 
         /**
@@ -125,51 +113,12 @@ namespace JustinCredible.TheWeek {
 
             this._appIsInBackground = false;
 
-            this._isShowingPinPrompt = true;
+            var isOnDefaultView = this.$location.url() === "/app/blank";
 
-            // Potentially display the PIN screen.
-            this.UIHelper.showPinEntryAfterResume().then(() => {
-                this._isShowingPinPrompt = false;
-
-                // We should show onboarding if the user hasn't completed it yet and they are not
-                // already in the process of working through it. Note that we do this purposefully
-                // after the PIN screen for the case where the user may be upgrading from a version
-                // of the application that doesn't have onboarding (we wouldn't want them to be able
-                // to bypass the PIN entry in that case).
-                let shouldShowOnboarding = !this.Configuration.hasCompletedOnboarding
-                                                && this.$location.path().indexOf("/app/onboarding") === -1;
-
-                if (shouldShowOnboarding) {
-
-                    // Tell Ionic to not animate and clear the history (hide the back button)
-                    // for the next view that we'll be navigating to below.
-                    this.$ionicHistory.nextViewOptions({
-                        disableAnimate: true,
-                        disableBack: true
-                    });
-
-                    // Navigate the user to the onboarding splash view.
-                    this.$location.path("/app/onboarding/splash");
-                    this.$location.replace();
-
-                    return;
-                }
-
-                // If the user is still at the blank sreen, then push them to their default view.
-                if (this.$location.url() === "" || this.$location.url() === "/app/blank") {
-
-                    // Tell Ionic to not animate and clear the history (hide the back button)
-                    // for the next view that we'll be navigating to below.
-                    this.$ionicHistory.nextViewOptions({
-                        disableAnimate: true,
-                        disableBack: true
-                    });
-
-                    // Navigate the user to their default view.
-                    this.$location.path(this.MenuDataSource.defaultCategory.href.substring(1));
-                    this.$location.replace();
-                }
-            });
+            if (isOnDefaultView) {
+                this.$ionicHistory.nextViewOptions({ disableAnimate: true, disableBack: true });
+                this.$state.go("app.magazine-list", null, { location: "replace" });
+            }
         }
 
         //#endregion

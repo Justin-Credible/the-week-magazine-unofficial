@@ -165,41 +165,6 @@
             this.UIHelper.alert("Added services to the global variable __services.");
         }
 
-        protected setRequirePinThreshold_click(): void {
-
-            var message = `Enter the value (in minutes) for PIN prompt threshold? Current setting is ${this.Configuration.requirePinThreshold} minutes.`;
-
-            this.UIHelper.prompt(message, "Require PIN Threshold", null, this.Configuration.requirePinThreshold.toString()).then((result: Models.KeyValuePair<string, string>) => {
-
-                if (result.key !== Constants.Buttons.OK) {
-                    return;
-                }
-
-                if (isNaN(parseInt(result.value, 10))) {
-                    this.UIHelper.alert("Invalid value; a number is required.");
-                    return;
-                }
-
-                this.Configuration.requirePinThreshold = parseInt(result.value, 10);
-
-                this.UIHelper.alert(`PIN prompt threshold is now set to ${result.value} minutes.`);
-            });
-        }
-
-        protected resetPinTimeout_click(): void {
-
-            this.Configuration.lastPausedAt = moment("01-01-2000", "MM-DD-yyyy");
-
-            var message = "The PIN timeout has been set to more than 10 minutes ago. To see the PIN screen, terminate the application via the OS task manager (don't just background it), and then re-launch.";
-
-            this.UIHelper.alert(message, "Reset PIN Timeout");
-        }
-
-        protected reEnableOnboarding_click(): void {
-            this.Configuration.hasCompletedOnboarding = false;
-            this.UIHelper.alert("Onboarding has been enabled and will occur upon next app boot.");
-        }
-
         protected testJsException_click(): void {
             /* tslint:disable:no-string-literal */
 

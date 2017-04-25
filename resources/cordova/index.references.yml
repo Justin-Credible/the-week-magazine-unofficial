@@ -23,6 +23,7 @@ lib:
     - lib/moment/moment.min.js
     - lib/uri.js/uri.min.js
     - lib/nprogress/nprogress.js
+    - lib/x2js/xml2json.min.js
 
     # This will be a 404 during development; it is copied into package at build time.
     - cordova.js

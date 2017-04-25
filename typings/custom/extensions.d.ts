@@ -37,3 +37,5 @@ interface Navigator {
      */
     standalone: boolean;
 }
+
+declare var X2JS;

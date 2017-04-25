@@ -27,50 +27,15 @@ namespace JustinCredible.TheWeek {
                 }
             });
 
-            // A shared view used between categories, assigned a number via the route URL (categoryNumber).
-            $stateProvider.state("app.category", {
-                url: "/category/:categoryNumber",
+            $stateProvider.state("app.magazine-list", {
+                url: "/magazine/list",
                 views: {
                     "root-view": {
-                        templateUrl: "Views/Category/Category.html",
-                        controller: Controllers.CategoryController.ID
+                        templateUrl: "Views/Magazine-List/Magazine-List.html",
+                        controller: Controllers.MagazineListController.ID,
                     }
                 }
             });
-
-            //#region Onboarding
-
-            $stateProvider.state("app.onboarding-splash", {
-                url: "/onboarding/splash",
-                views: {
-                    "root-view": {
-                        templateUrl: "Views/Onboarding/Onboarding-Splash/Onboarding-Splash.html",
-                        controller: Controllers.OnboardingSplashController.ID
-                    }
-                }
-            });
-
-            $stateProvider.state("app.onboarding-register", {
-                url: "/onboarding/register",
-                views: {
-                    "root-view": {
-                        templateUrl: "Views/Onboarding/Onboarding-Register/Onboarding-Register.html",
-                        controller: Controllers.OnboardingRegisterController.ID
-                    }
-                }
-            });
-
-            $stateProvider.state("app.onboarding-share", {
-                url: "/onboarding/share",
-                views: {
-                    "root-view": {
-                        templateUrl: "Views/Onboarding/Onboarding-Share/Onboarding-Share.html",
-                        controller: Controllers.OnboardingShareController.ID
-                    }
-                }
-            });
-
-            //#endregion
 
             //#region Settings
 
@@ -80,26 +45,6 @@ namespace JustinCredible.TheWeek {
                     "root-view": {
                         templateUrl: "Views/Settings/Settings-List/Settings-List.html",
                         controller: Controllers.SettingsListController.ID
-                    }
-                }
-            });
-
-            $stateProvider.state("app.cloud-sync", {
-                url: "/settings/cloud-sync",
-                views: {
-                    "root-view": {
-                        templateUrl: "Views/Settings/Cloud-Sync/Cloud-Sync.html",
-                        controller: Controllers.CloudSyncController.ID
-                    }
-                }
-            });
-
-            $stateProvider.state("app.configure-pin", {
-                url: "/settings/configure-pin",
-                views: {
-                    "root-view": {
-                        templateUrl: "Views/Settings/Configure-Pin/Configure-Pin.html",
-                        controller: Controllers.ConfigurePinController.ID
                     }
                 }
             });

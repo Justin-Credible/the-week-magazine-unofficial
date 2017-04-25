@@ -1,7 +1,7 @@
 --- # Build Schemes
 
 # The name of the scheme to use if one isn't provided via the --scheme flag.
-default: "localdev"
+default: "development"
 
 # This holds a collection of data that can be used to override and/or supplement existing
 # scheme replacement collections. These values will stomp over values from a scheme when
@@ -27,7 +27,7 @@ schemes:
             IS_WEB_PLATFORM: false
 
     # Used for development on a host entry pointing to localhost.
-    localdev:
+    development:
         base: "_common"
         debug: true
         replacements:
@@ -53,37 +53,12 @@ schemes:
                     - "*"
                 connect_src:
                     - "'self'"
-                    - "https://*.your-company.com"
-                    - "http://*.your-company.com"
+                    - "https://*.theweek.com"
+                    - "http://*.theweek.com"
 
                     # Allows connecting to Ionic serve's LiveReload service via port 35279.
                     - "ws://localhost:35279"
                     - "ws://localhost:35729"
-
-
-    # Same as localdev, but points at an internal development server.
-    development:
-        base: "localdev"
-        debug: true
-        replacements:
-            API_URL: "http://development.your-company.com/api"
-
-
-    # Same as localdev, but points at an internal staging server.
-    staging:
-        base: "localdev"
-        debug: true
-        replacements:
-            API_URL: "http://staging.your-company.com/api"
-
-
-    # Same as localdev, but points at a production server.
-    production:
-        base: "localdev"
-        debug: true
-        replacements:
-            API_URL: "http://www.your-company.com/api"
-
 
     # Used for shipping release builds, points at production.
     release:
@@ -111,5 +86,5 @@ schemes:
                     - "*"
                 connect_src:
                     - "'self'"
-                    - "https://*.your-company.com"
-                    - "http://*.your-company.com"
+                    - "https://*.theweek.com"
+                    - "http://*.theweek.com"

@@ -28,15 +28,6 @@ namespace JustinCredible.TheWeek.Services {
 
         private static ENABLE_DEVELOPER_TOOLS = "ENABLE_DEVELOPER_TOOLS";
         private static ENABLE_MOCK_HTTP_CALLS = "ENABLE_MOCK_HTTP_CALLS";
-        private static REQUIRE_PIN_THRESHOLD = "REQUIRE_PIN_THRESHOLD";
-        private static LAST_PAUSED_AT = "LAST_PAUSED_AT";
-        private static HAS_COMPLETED_ONBOARDING = "HAS_COMPLETED_ONBOARDING";
-
-        //#endregion
-
-        //#region Defaults
-
-        private static REQUIRE_PIN_THRESHOLD_DEFAULT = 10; // Default setting is 10 minutes.
 
         //#endregion
 
@@ -129,50 +120,6 @@ namespace JustinCredible.TheWeek.Services {
             }
             else {
                 localStorage.setItem(Configuration.ENABLE_MOCK_HTTP_CALLS, value.toString());
-            }
-        }
-
-        get requirePinThreshold(): number {
-            var value = localStorage.getItem(Configuration.REQUIRE_PIN_THRESHOLD);
-            return value == null ? Configuration.REQUIRE_PIN_THRESHOLD_DEFAULT : parseInt(value, 10);
-        }
-
-        set requirePinThreshold(value: number) {
-            if (value == null) {
-                localStorage.removeItem(Configuration.REQUIRE_PIN_THRESHOLD);
-            }
-            else {
-                localStorage.setItem(Configuration.REQUIRE_PIN_THRESHOLD, value.toString());
-            }
-        }
-
-        set lastPausedAt(value: moment.Moment) {
-            if (value == null) {
-                localStorage.removeItem(Configuration.LAST_PAUSED_AT);
-            }
-            else {
-                localStorage.setItem(Configuration.LAST_PAUSED_AT, moment(value).format());
-            }
-        }
-
-        get lastPausedAt(): moment.Moment {
-            var lastPausedAt: string;
-
-            lastPausedAt = localStorage.getItem(Configuration.LAST_PAUSED_AT);
-
-            return moment(lastPausedAt).isValid() ? moment(lastPausedAt) : null;
-        }
-
-        get hasCompletedOnboarding(): boolean {
-            return localStorage.getItem(Configuration.HAS_COMPLETED_ONBOARDING) === "true";
-        }
-
-        set hasCompletedOnboarding(value: boolean) {
-            if (value == null) {
-                localStorage.removeItem(Configuration.HAS_COMPLETED_ONBOARDING);
-            }
-            else {
-                localStorage.setItem(Configuration.HAS_COMPLETED_ONBOARDING, value.toString());
             }
         }
 

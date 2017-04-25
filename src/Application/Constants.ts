@@ -41,4 +41,6 @@ namespace JustinCredible.TheWeek.Constants.Events {
 
     export const APP_MENU_BUTTON = "app.menuButton";
     export const APP_CLOSE_DIALOG = "app.appCloseDialog";
+
+    export const SCROLL_REFRESH_COMPLETE = "scroll.refreshComplete";
 }

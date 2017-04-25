@@ -10,3 +10,5 @@ The magazine website has since pulled all mention of an Android app from their w
 Therefore, I have created this unofficial app so Android users can continue to read the magazine.
 
 I am not affiliated with _The Week_ in any way.
+
+While this app is built with cross-platform tech (Ionic/Cordova), a portion of it uses a native plugin which I've only written for Android. Since the official iOS app still works, there is no reason to make this app work on iOS for now.

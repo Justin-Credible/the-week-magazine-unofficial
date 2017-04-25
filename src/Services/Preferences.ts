@@ -18,8 +18,6 @@
 
         private static USER_ID = "USER_ID";
         private static TOKEN = "TOKEN";
-        private static PIN = "PIN";
-        private static CATEGORY_ORDER = "CATEGORY_ORDER";
 
         //#endregion
 
@@ -48,43 +46,6 @@
             }
             else {
                 localStorage.setItem(Preferences.TOKEN, value);
-            }
-        }
-
-        //#endregion
-
-        //#region Mobile Application Specific
-
-        get pin(): string {
-            return localStorage.getItem(Preferences.PIN);
-        }
-
-        set pin(value: string) {
-            if (value == null) {
-                localStorage.removeItem(Preferences.PIN);
-            }
-            else {
-                localStorage.setItem(Preferences.PIN, value);
-            }
-        }
-
-        get categoryOrder(): string[] {
-            var categoryOrder = localStorage.getItem(Preferences.CATEGORY_ORDER);
-
-            if (categoryOrder == null) {
-                return null;
-            }
-            else {
-                return JSON.parse(categoryOrder);
-            }
-        }
-
-        set categoryOrder(value: string[]) {
-            if (value == null) {
-                localStorage.removeItem(Preferences.CATEGORY_ORDER);
-            }
-            else {
-                localStorage.setItem(Preferences.CATEGORY_ORDER, JSON.stringify(value));
             }
         }
 
