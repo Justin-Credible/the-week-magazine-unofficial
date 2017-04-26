@@ -1,5 +1,7 @@
 package net.justin_credible.theweek;
 
+import android.content.Context;
+
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.json.JSONArray;
@@ -170,8 +172,11 @@ public final class ContentManagerPlugin extends CordovaPlugin {
             }
         };
 
+        Context appContext = this.cordova.getActivity().getApplicationContext();
+
+        currentDownloadTask.setBaseStorageDir(appContext.getFilesDir().toString());
         currentDownloadTask.setBaseContentURL(baseContentURL);
-        
+
         try {
             currentDownloadTask.execute(id);
         }
