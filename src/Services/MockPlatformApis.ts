@@ -118,6 +118,7 @@
 
         public getContentManagerPlugin(): ContentManagerPlugin.ContentManagerPluginStatic {
             return {
+                setContentBaseURL: _.bind(this.noOp, this),
                 getDownloadedIssues: _.bind(this.noOp, this),
                 downloadIssue: _.bind(this.noOp, this),
                 cancelDownload: _.bind(this.noOp, this),

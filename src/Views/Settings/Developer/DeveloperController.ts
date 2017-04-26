@@ -68,7 +68,7 @@
             this.viewModel.defaultStoragePathId = this.FileUtilities.getDefaultRootPathId();
             this.viewModel.defaultStoragePath = this.FileUtilities.getDefaultRootPath();
 
-            this.viewModel.apiUrl = this.Configuration.apiUrl;
+            this.viewModel.contentURL = this.Configuration.contentUrl;
         }
 
         //#endregion
@@ -119,18 +119,18 @@
             });
         }
 
-        protected apiUrl_click(): void {
-            var message = "Here you can edit the API URL for this session.";
+        protected contentURL_click(): void {
+            var message = "Here you can edit the content URL for this session.";
 
-            this.UIHelper.prompt(message, "API URL", null, this.Configuration.apiUrl).then((result: Models.KeyValuePair<string, string>) => {
+            this.UIHelper.prompt(message, "Content URL", null, this.Configuration.contentUrl).then((result: Models.KeyValuePair<string, string>) => {
 
                 if (result.key === Constants.Buttons.Cancel) {
                     return;
                 }
 
-                this.Configuration.apiUrl = result.value;
-                this.viewModel.apiUrl = result.value;
-                this.Plugins.toast.showShortBottom("API URL changed for this session only.");
+                this.Configuration.contentUrl = result.value;
+                this.viewModel.contentURL = result.value;
+                this.Plugins.toast.showShortBottom("Content URL changed for this session only.");
             });
         }
 

@@ -7,6 +7,15 @@ declare module ContentManagerPlugin {
     interface ContentManagerPluginStatic {
 
         /**
+         * Used to set the base URL used for retrieving magazine content.
+         * 
+         * @param baseURL The base URL to use for retrieving magazine content
+         * @param successCallback The callback to be executed when the call completes successfully.
+         * @param failureCallback The callback to be executed when the call fails.
+         */
+        setContentBaseURL(baseURL: string, successCallback: () => void, failureCallback: (error: string) => void): void;
+
+        /**
          * Used to get a list of issues that have been downloaded to the device.
          * 
          * @param successCallback The callback to be executed when the call completes successfully.

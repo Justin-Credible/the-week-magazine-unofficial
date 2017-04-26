@@ -47,14 +47,9 @@ declare namespace JustinCredible.TheWeek.Interfaces {
         githubUrl: string;
 
         /**
-         * The base URL for the REST APIs for the application.
+         * The base URL for the magazine content.
          */
-        apiUrl: string;
-
-        /**
-         * The version of the API to use; this will be sent in the X-API-Version header.
-         */
-        apiVersion: string;
+        contentUrl: string;
 
         /**
          * Indicates if this application was built to be served as a website.

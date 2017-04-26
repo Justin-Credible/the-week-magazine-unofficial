@@ -11,6 +11,7 @@ import java.util.Map;
 
 public final class ContentManagerPlugin extends CordovaPlugin {
 
+    private String baseContentURL;
     private DownloadTask currentDownloadTask;
     private DownloadStatus currentDownloadStatus = new DownloadStatus();
 
@@ -23,7 +24,18 @@ public final class ContentManagerPlugin extends CordovaPlugin {
             return false;
         }
 
-        if (action.equals("getDownloadedIssues")) {
+        if (action.equals("setContentBaseURL")) {
+
+            try {
+                this.setContentBaseURL(args, callbackContext);
+            }
+            catch (Exception exception) {
+                callbackContext.error("ContentManagerPlugin.setContentBaseURL() uncaught exception: " + exception.getMessage());
+            }
+
+            return true;
+        }
+        else if (action.equals("getDownloadedIssues")) {
 
             try {
                 this.getDownloadedIssues(args, callbackContext);
@@ -99,12 +111,29 @@ public final class ContentManagerPlugin extends CordovaPlugin {
 
     //region Plugin Methods
 
+    private synchronized void setContentBaseURL(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+
+        String baseContentURL = args.getString(0);
+
+        if (baseContentURL == null || baseContentURL.equals("")) {
+            callbackContext.error("A URL is required.");
+            return;
+        }
+
+        this.baseContentURL = baseContentURL;
+    }
+
     private synchronized void getDownloadedIssues(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
 
         callbackContext.error("TODO: Not implemented.");
     }
 
     private synchronized void downloadIssue(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+
+        if (baseContentURL == null) {
+            callbackContext.error("A content base URL must be set using setContentBaseURL before invoking this method.");
+            return;
+        }
 
         if (currentDownloadTask != null) {
             callbackContext.error("Another download is already in progress.");
@@ -141,6 +170,8 @@ public final class ContentManagerPlugin extends CordovaPlugin {
             }
         };
 
+        currentDownloadTask.setBaseContentURL(baseContentURL);
+        
         try {
             currentDownloadTask.execute(id);
         }

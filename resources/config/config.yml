@@ -13,14 +13,11 @@ authorName: "${AUTHOR_NAME}"
 authorEmail: "${AUTHOR_EMAIL}"
 authorWebsite: "${AUTHOR_WEBSITE}"
 
-licenseUrl: "https://github.com/Justin-Credible/Ionic-TypeScript-Starter/blob/master/LICENSE"
-githubUrl: "https://github.com/Justin-Credible/Ionic-TypeScript-Starter"
+licenseUrl: "https://github.com/Justin-Credible/the-week-magazine-unofficial/blob/master/LICENSE"
+githubUrl: "https://github.com/Justin-Credible/the-week-magazine-unofficial"
 
-# The base URL for the REST APIs for the application.
-apiUrl: "${API_URL}"
-
-# The version of the API to use; this will sent in the X-API-Version header.
-apiVersion: "${API_VERSION}"
+# The base URL for the magazine content.
+contentUrl: "${CONTENT_URL}"
 
 # Indicates if this application was built to be served as a website.
 isWebPlatform: ${IS_WEB_PLATFORM}

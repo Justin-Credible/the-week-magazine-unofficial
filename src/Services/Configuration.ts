@@ -69,28 +69,28 @@ namespace JustinCredible.TheWeek.Services {
 
         //#region Extended Properties
 
-        private _apiUrl: string = null;
+        private _contentUrl: string = null;
 
         /**
-         * Path to the application's services.
+         * The base URL for the magazine content.
          */
-        get apiUrl(): string {
+        get contentUrl(): string {
 
-            // If an API URL has been set via the developer tools for this session,
+            // If the URL has been set via the developer tools for this session,
             // then use it, otherwise use the URL defined by the build configuration.
-            if (this._apiUrl) {
-                return this._apiUrl;
+            if (this._contentUrl) {
+                return this._contentUrl;
             }
             else {
-                return this.buildVars.config.apiUrl;
+                return this.buildVars.config.contentUrl;
             }
         }
 
         /**
-         * Allows for setting the API URL temporarily for the current session only.
+         * Allows for setting the content URL temporarily for the current session only.
          */
-        set apiUrl(value: string) {
-            this._apiUrl = value;
+        set contentUrl(value: string) {
+            this._contentUrl = value;
         }
 
         //#endregion

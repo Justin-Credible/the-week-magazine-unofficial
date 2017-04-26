@@ -105,30 +105,14 @@
             // Keep track of how many requests are in progress and show spinners etc.
             this.handleRequestStart(config);
 
-            // If the URL starts with a tilde, we know this is a URL for one of our own restful API
-            // endpoints. In this case, we'll add our required headers, authorization token, and the
-            // base URL for the current data source.
+            // If the URL starts with a tilde, we know this is a URL for one of the magazine content
+            // endpoints. In this case, we'll add in the base path from configuration.
             if (this.Utilities.startsWith(config.url, "~")) {
-                /* tslint:disable:no-string-literal */
 
-                // Specify the version of the API we can consume.
-                config.headers["X-API-Version"] = this.Configuration.values.apiVersion;
-
-                // Specify the content type we are sending and the payload type that we want to receive.
-                config.headers["Content-Type"] = "application/json";
-                config.headers["Accept"] = "application/json";
-
-                // If we currently have a user ID and token, then include it in the authorization header.
-                if (this.Preferences.userId && this.Preferences.token) {
-                    config.headers["Authorization"] = this.getAuthorizationHeader(this.Preferences.userId, this.Preferences.token);
-                }
-
-                /* tslint:enable:no-string-literal */
-
-                if (this.Configuration.apiUrl && this.Configuration.apiUrl) {
+                if (this.Configuration.contentUrl && this.Configuration.contentUrl) {
 
                     // Grab the base data source URL.
-                    baseUrl = this.Configuration.apiUrl;
+                    baseUrl = this.Configuration.contentUrl;
 
                     // Remove the leading tilde character.
                     config.url = config.url.substring(1);
@@ -366,26 +350,6 @@
                 // bar a little bit to show some of the work has completed.
                 NProgress.inc();
             }
-        }
-
-        /**
-         * Used to create a header value for use with the basic Authorization HTTP header using
-         * the given user name and password value.
-         * 
-         * http://en.wikipedia.org/wiki/Basic_access_authentication
-         * 
-         * @param The user name to use.
-         * @param The password to use.
-         * @returns A value to use for the HTTP Authorization header.
-         */
-        private getAuthorizationHeader(userName: string, password: string): string {
-            var headerValue: string;
-
-            // Concatenate the user name and password with a colon.
-            headerValue = this.Utilities.format("{0}:{1}", userName, password);
-
-            // Base64 encode the user name and password and prepend "Basic".
-            return "Basic " + btoa(headerValue);
         }
 
         //#endregion

@@ -13,6 +13,27 @@ var PLUGIN_ID = "ContentManagerPlugin";
 var ContentManagerPlugin = {};
 
 /**
+ * Used to set the base URL used for retrieving magazine content.
+ * 
+ * @param string baseURL - The base URL to use for retrieving magazine content.
+ * @param [function] successCallback - The success callback for this asynchronous function.
+ * @param [function] failureCallback - The failure callback for this asynchronous function; receives an error string.
+ */
+ContentManagerPlugin.setContentBaseURL = function setContentBaseURL(baseURL, successCallback, failureCallback) {
+
+    if (typeof(baseURL) !== "string") {
+
+        if (failureCallback) {
+            failureCallback(new Error("An base URL is required."));
+        }
+
+        return;
+    }
+
+    exec(successCallbackWrapper, failureCallback, PLUGIN_ID, "setContentBaseURL", [ baseURL ]);
+};
+
+/**
  * Used to get a list of issues that have been downloaded to the device.
  * 
  * @param [function] successCallback - The success callback for this asynchronous function.

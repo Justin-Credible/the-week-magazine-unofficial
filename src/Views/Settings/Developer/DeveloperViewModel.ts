@@ -23,6 +23,6 @@
         defaultStoragePathId: string;
         defaultStoragePath: string;
 
-        apiUrl: string;
+        contentURL: string;
     }
 }
