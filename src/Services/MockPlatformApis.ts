@@ -123,6 +123,7 @@
                 downloadIssue: _.bind(this.noOp, this),
                 cancelDownload: _.bind(this.noOp, this),
                 getDownloadStatus: _.bind(this.noOp, this),
+                getLastDownloadResult: _.bind(this.noOp, this),
                 deleteIssue: _.bind(this.noOp, this),
                 getIssueContentXML: _.bind(this.noOp, this),
             };

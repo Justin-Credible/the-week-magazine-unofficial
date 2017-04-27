@@ -16,6 +16,7 @@ public final class ContentManagerPlugin extends CordovaPlugin {
     private String baseContentURL;
     private DownloadTask currentDownloadTask;
     private DownloadStatus currentDownloadStatus = new DownloadStatus();
+    private DownloadResult lastDownloadResult;
 
     //region Plugin Entry Point
 
@@ -77,6 +78,17 @@ public final class ContentManagerPlugin extends CordovaPlugin {
             }
             catch (Exception exception) {
                 callbackContext.error("ContentManagerPlugin.getDownloadStatus() uncaught exception: " + exception.getMessage());
+            }
+
+            return true;
+        }
+        else if (action.equals("getLastDownloadResult")) {
+
+            try {
+                this.getLastDownloadResult(args, callbackContext);
+            }
+            catch (Exception exception) {
+                callbackContext.error("ContentManagerPlugin.getLastDownloadResult() uncaught exception: " + exception.getMessage());
             }
 
             return true;
@@ -160,15 +172,18 @@ public final class ContentManagerPlugin extends CordovaPlugin {
             }
 
             @Override
-            protected void onPostExecute(Boolean success) {
+            protected void onPostExecute(DownloadResult result) {
                 currentDownloadTask = null;
                 currentDownloadStatus = new DownloadStatus();
+                lastDownloadResult = result;
             }
 
             @Override
             protected void onCancelled() {
                 currentDownloadTask = null;
                 currentDownloadStatus = new DownloadStatus();
+                lastDownloadResult = new DownloadResult("Download was cancelled.");
+                lastDownloadResult.cancelled = true;
             }
         };
 
@@ -212,6 +227,16 @@ public final class ContentManagerPlugin extends CordovaPlugin {
         resultMap.put("id", currentDownloadStatus.id);
         resultMap.put("statusText", currentDownloadStatus.statusText);
         resultMap.put("percentage", currentDownloadStatus.percentage);
+
+        callbackContext.success(new JSONObject(resultMap));
+    }
+
+    private synchronized void getLastDownloadResult(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        resultMap.put("message", lastDownloadResult.message);
+        resultMap.put("success", lastDownloadResult.success);
+        resultMap.put("cancelled", lastDownloadResult.cancelled);
 
         callbackContext.success(new JSONObject(resultMap));
     }

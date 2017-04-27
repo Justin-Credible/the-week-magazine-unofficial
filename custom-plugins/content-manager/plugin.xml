@@ -26,6 +26,7 @@
         <!-- Our Plugin Source -->
         <source-file src="src/android/ContentManagerPlugin.java" target-dir="src/net/justin_credible/theweek" />
         <source-file src="src/android/DownloadStatus.java" target-dir="src/net/justin_credible/theweek" />
+        <source-file src="src/android/DownloadResult.java" target-dir="src/net/justin_credible/theweek" />
         <source-file src="src/android/DownloadTask.java" target-dir="src/net/justin_credible/theweek" />
 
     </platform>

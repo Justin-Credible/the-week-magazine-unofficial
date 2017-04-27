@@ -82,9 +82,20 @@ ContentManagerPlugin.cancelDownload = function cancelDownload(successCallback, f
  * @param [function] successCallback - The success callback for this asynchronous function.
  * @param [function] failureCallback - The failure callback for this asynchronous function; receives an error string.
  */
-ContentManagerPlugin.getDownloadStatus = function getDownloadStatus(id, successCallback, failureCallback) {
+ContentManagerPlugin.getDownloadStatus = function getDownloadStatus(successCallback, failureCallback) {
 
     exec(successCallbackWrapper, failureCallback, PLUGIN_ID, "getDownloadStatus", []);
+};
+
+/**
+ * Used to check the result of the last download.
+ * 
+ * @param [function] successCallback - The success callback for this asynchronous function.
+ * @param [function] failureCallback - The failure callback for this asynchronous function; receives an error string.
+ */
+ContentManagerPlugin.getLastDownloadResult = function getLastDownloadResult(successCallback, failureCallback) {
+
+    exec(successCallbackWrapper, failureCallback, PLUGIN_ID, "getLastDownloadResult", []);
 };
 
 /**

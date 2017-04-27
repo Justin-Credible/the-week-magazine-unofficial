@@ -46,7 +46,15 @@ declare module ContentManagerPlugin {
          * @param successCallback The callback to be executed when the call completes successfully.
          * @param failureCallback The callback to be executed when the call fails.
          */
-        getDownloadStatus(id: string, successCallback: (status: DownloadStatus) => void, failureCallback: (error: string) => void): void;
+        getDownloadStatus(successCallback: (status: DownloadStatus) => void, failureCallback: (error: string) => void): void;
+
+        /**
+         * Used to check the result of the last download.
+         * 
+         * @param successCallback The callback to be executed when the call completes successfully.
+         * @param failureCallback The callback to be executed when the call fails.
+         */
+        getLastDownloadResult(successCallback: (status: DownloadResult) => void, failureCallback: (error: string) => void): void;
 
         /**
          * Used to remove the given issue from the device.
@@ -82,6 +90,12 @@ declare module ContentManagerPlugin {
         id: string;
         statusText: string;
         percentage: number;
+    }
+
+    interface DownloadResult {
+        message: string;
+        success: boolean;
+        cancelled: boolean;
     }
 }
 
