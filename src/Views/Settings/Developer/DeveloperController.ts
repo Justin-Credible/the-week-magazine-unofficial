@@ -12,6 +12,7 @@
                 "$rootScope",
                 "$injector",
                 "$window",
+                "$interval",
                 Services.Plugins.ID,
                 Services.Platform.ID,
                 Services.UIHelper.ID,
@@ -28,6 +29,7 @@
             private $rootScope: ng.IRootScopeService,
             private $injector: ng.auto.IInjectorService,
             private $window: ng.IWindowService,
+            private $interval: ng.IIntervalService,
             private Plugins: Services.Plugins,
             private Platform: Services.Platform,
             private UIHelper: Services.UIHelper,
@@ -163,6 +165,88 @@
             /* tslint:enable:no-string-literal */
 
             this.UIHelper.alert("Added services to the global variable __services.");
+        }
+
+        protected downloadIssue_click(): void {
+
+            this.UIHelper.prompt("Enter an issue ID to download.", "Download Issue", null, "com.dennis.theweek.issue.issue819")
+                .then((result: Models.KeyValuePair<string, string>) => {
+
+                if (!result || !result.key || result.key === Constants.Buttons.Cancel) {
+                    return;
+                }
+
+                let errorCallback = (error: any) => {
+                    this.$interval.cancel(this._checkDownloadInterval);
+                    this.Plugins.toast.showShortBottom("An error occurred while downloading an issue.");
+                    this.Logger.error(DeveloperController.ID, "downloadIssue_click", "An error occurred while downloading an issue.", error);
+                };
+
+                this.Plugins.contentManager.setContentBaseURL(this.Configuration.values.contentUrl, () => {
+
+                    this.Plugins.contentManager.downloadIssue(result.value, () => {
+
+                        this._checkDownloadInterval = this.$interval(_.bind(this.checkDownloadStatus, this), 1000);
+
+                    }, errorCallback);
+
+                }, errorCallback);
+            });
+        }
+
+        private _checkDownloadInterval: ng.IPromise<void>;
+
+        private checkDownloadStatus(): void {
+
+            this.Plugins.contentManager.getDownloadStatus((status: ContentManagerPlugin.DownloadStatus) => {
+
+                this.viewModel.downloadStatus = status;
+                this.viewModel.downloadStatusJSON = JSON.stringify(status, null, 4);
+                this.scope.$apply();
+
+                if (!status || !status.inProgress) {
+                    this.$interval.cancel(this._checkDownloadInterval);
+
+                    this.Plugins.contentManager.getLastDownloadResult((result: ContentManagerPlugin.DownloadResult) => {
+
+                        this.viewModel.downloadResult = result;
+                        this.viewModel.downloadResultJSON = JSON.stringify(result, null, 4);
+                        this.scope.$apply();
+
+                    }, (error: any) => {
+                        this.Logger.error(DeveloperController.ID, "checkDownloadStatus", "Error callback hit for getLastDownloadResult", error);
+                        this.$interval.cancel(this._checkDownloadInterval);
+                    });
+
+                    return;
+                }
+
+            }, (error: any) => {
+                this.Logger.error(DeveloperController.ID, "checkDownloadStatus", "Error callback hit for getDownloadStatus", error);
+                this.$interval.cancel(this._checkDownloadInterval);
+            });
+        }
+
+        protected getDownloadStats_click(): void {
+
+            this.Plugins.contentManager.getDownloadStatus((result: ContentManagerPlugin.DownloadStatus) => {
+                this.viewModel.downloadStatus = result;
+                this.viewModel.downloadStatusJSON = JSON.stringify(result, null, 4);
+                this.scope.$apply();
+            });
+
+            this.Plugins.contentManager.getLastDownloadResult((result: ContentManagerPlugin.DownloadResult) => {
+                this.viewModel.downloadResult = result;
+                this.viewModel.downloadResultJSON = JSON.stringify(result, null, 4);
+                this.scope.$apply();
+            });
+        }
+
+        protected clearDownloadStats_click(): void {
+            this.viewModel.downloadStatus = null;
+            this.viewModel.downloadStatusJSON = null;
+            this.viewModel.downloadResult = null;
+            this.viewModel.downloadResultJSON = null;
         }
 
         protected testJsException_click(): void {

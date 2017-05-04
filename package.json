@@ -63,8 +63,7 @@
     "cordova-universal-clipboard@0.1.0"
   ],
   "cordovaPlatforms": [
-    "android",
-    "ios"
+    "android"
   ],
   "devDependencies": {
     "gulp-typedoc": "^1.2.1",

@@ -30,7 +30,7 @@ ContentManagerPlugin.setContentBaseURL = function setContentBaseURL(baseURL, suc
         return;
     }
 
-    exec(successCallbackWrapper, failureCallback, PLUGIN_ID, "setContentBaseURL", [ baseURL ]);
+    exec(successCallback, failureCallback, PLUGIN_ID, "setContentBaseURL", [ baseURL ]);
 };
 
 /**
@@ -41,7 +41,7 @@ ContentManagerPlugin.setContentBaseURL = function setContentBaseURL(baseURL, suc
  */
 ContentManagerPlugin.getDownloadedIssues = function getDownloadedIssues(successCallback, failureCallback) {
 
-    exec(successCallbackWrapper, failureCallback, PLUGIN_ID, "getDownloadedIssues", []);
+    exec(successCallback, failureCallback, PLUGIN_ID, "getDownloadedIssues", []);
 };
 
 /**
@@ -62,7 +62,7 @@ ContentManagerPlugin.downloadIssue = function downloadIssue(id, successCallback,
         return;
     }
 
-    exec(successCallbackWrapper, failureCallback, PLUGIN_ID, "downloadIssue", [ id ]);
+    exec(successCallback, failureCallback, PLUGIN_ID, "downloadIssue", [ id ]);
 };
 
 /**
@@ -73,7 +73,7 @@ ContentManagerPlugin.downloadIssue = function downloadIssue(id, successCallback,
  */
 ContentManagerPlugin.cancelDownload = function cancelDownload(successCallback, failureCallback) {
 
-    exec(successCallbackWrapper, failureCallback, PLUGIN_ID, "cancelDownload", [ id ]);
+    exec(successCallback, failureCallback, PLUGIN_ID, "cancelDownload", [ id ]);
 };
 
 /**
@@ -84,7 +84,7 @@ ContentManagerPlugin.cancelDownload = function cancelDownload(successCallback, f
  */
 ContentManagerPlugin.getDownloadStatus = function getDownloadStatus(successCallback, failureCallback) {
 
-    exec(successCallbackWrapper, failureCallback, PLUGIN_ID, "getDownloadStatus", []);
+    exec(successCallback, failureCallback, PLUGIN_ID, "getDownloadStatus", []);
 };
 
 /**
@@ -95,7 +95,7 @@ ContentManagerPlugin.getDownloadStatus = function getDownloadStatus(successCallb
  */
 ContentManagerPlugin.getLastDownloadResult = function getLastDownloadResult(successCallback, failureCallback) {
 
-    exec(successCallbackWrapper, failureCallback, PLUGIN_ID, "getLastDownloadResult", []);
+    exec(successCallback, failureCallback, PLUGIN_ID, "getLastDownloadResult", []);
 };
 
 /**
@@ -116,7 +116,7 @@ ContentManagerPlugin.deleteIssue = function deleteIssue(id, successCallback, fai
         return;
     }
 
-    exec(successCallbackWrapper, failureCallback, PLUGIN_ID, "deleteIssue", [ id ]);
+    exec(successCallback, failureCallback, PLUGIN_ID, "deleteIssue", [ id ]);
 };
 
 /**
@@ -137,7 +137,7 @@ ContentManagerPlugin.getIssueContentXML = function getIssueContentXML(id, succes
         return;
     }
 
-    exec(successCallbackWrapper, failureCallback, PLUGIN_ID, "getIssueContentXML", [ id ]);
+    exec(successCallback, failureCallback, PLUGIN_ID, "getIssueContentXML", [ id ]);
 };
 
 module.exports = ContentManagerPlugin;

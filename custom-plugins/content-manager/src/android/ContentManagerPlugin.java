@@ -135,6 +135,8 @@ public final class ContentManagerPlugin extends CordovaPlugin {
         }
 
         this.baseContentURL = baseContentURL;
+
+        callbackContext.success();
     }
 
     private synchronized void getDownloadedIssues(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
@@ -232,6 +234,10 @@ public final class ContentManagerPlugin extends CordovaPlugin {
     }
 
     private synchronized void getLastDownloadResult(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+
+        if (lastDownloadResult == null) {
+            callbackContext.success();
+        }
 
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("message", lastDownloadResult.message);

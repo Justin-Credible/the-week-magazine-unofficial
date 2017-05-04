@@ -85,11 +85,7 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
             File issueDir = new File(issueDirPath);
 
             if (issueDir.isDirectory() && issueDir.exists()) {
-                Boolean deleteSuccess = issueDir.delete();
-
-                if (!deleteSuccess) {
-                    return new DownloadResult(MessageFormat.format("Unable to delete existing directory: {0}", issueDirPath));
-                }
+                deleteDir(issueDir);
             }
 
             // Create the directory for the issue.
@@ -106,11 +102,7 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
             File downloadDir = new File(downloadDirPath);
 
             if (downloadDir.isDirectory() && downloadDir.exists()) {
-                Boolean deleteSuccess = downloadDir.delete();
-
-                if (!deleteSuccess) {
-                    return new DownloadResult(MessageFormat.format("Unable to delete existing directory: {0}", downloadDirPath));
-                }
+                deleteDir(downloadDir);
             }
 
             createDirSuccess = downloadDir.mkdirs();
@@ -199,7 +191,7 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
 
                     // If we've already determined the paths for this entry node there is no
                     // need to continue iterating the link nodes.
-                    if (themePackageURL != null || articleURL != null) {
+                    if (themePackageURL != null && articleURL != null) {
                         break;
                     }
 
@@ -241,6 +233,11 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
                 }
             }
 
+            // Sanity check; we should have found articles at this point.
+            if (articleURLs.size() == 0) {
+                throw new Exception("No articles were found in content.xml");
+            }
+
             // *************************************************************************************
             // Download the shared theme ZIP file.
 
@@ -279,7 +276,7 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
             // the running total of percentage points while downloading, and the fragment is calculated
             // so we know how many percentage points each file should count for.
             double downloadPercentage = 0.0;
-            double downloadPercentageFragment = 60 / articleURLs.size();
+            double downloadPercentageFragment = (double)60 / (double)articleURLs.size();
 
             for (String articleURL : articleURLs) {
 
@@ -320,7 +317,7 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
             // the running total of percentage points while extracting, and the fragment is calculated
             // so we know how many percentage points each file should count for.
             double extractPercentage = 0.0;
-            double extractPercentageFragment = 19 / downloadDir.listFiles().length;
+            double extractPercentageFragment = (double)19 / (double)downloadDir.listFiles().length;
 
              for (File downloadedFile : downloadDir.listFiles()) {
 
@@ -380,6 +377,26 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
         File file2 = new File(file1, path2);
 
         return file2.getPath();
+    }
+
+    /**
+     * Removes a directory and all of its children.
+     *
+     * http://stackoverflow.com/a/29175213
+     *
+     * @param file The directory to remove.
+     */
+    private void deleteDir(File file) {
+
+        File[] contents = file.listFiles();
+
+        if (contents != null) {
+            for (File f : contents) {
+                deleteDir(f);
+            }
+        }
+
+        file.delete();
     }
 
     /**

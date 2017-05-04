@@ -13,7 +13,7 @@ declare module ContentManagerPlugin {
          * @param successCallback The callback to be executed when the call completes successfully.
          * @param failureCallback The callback to be executed when the call fails.
          */
-        setContentBaseURL(baseURL: string, successCallback: () => void, failureCallback: (error: string) => void): void;
+        setContentBaseURL(baseURL: string, successCallback?: () => void, failureCallback?: (error: string) => void): void;
 
         /**
          * Used to get a list of issues that have been downloaded to the device.
@@ -21,7 +21,7 @@ declare module ContentManagerPlugin {
          * @param successCallback The callback to be executed when the call completes successfully.
          * @param failureCallback The callback to be executed when the call fails.
          */
-        getDownloadedIssues(successCallback: (result: DownloadedIssue[]) => void, failureCallback: (error: string) => void): void;
+        getDownloadedIssues(successCallback?: (result: DownloadedIssue[]) => void, failureCallback?: (error: string) => void): void;
 
         /**
          * Used to start a background download of the given issue.
@@ -30,7 +30,7 @@ declare module ContentManagerPlugin {
          * @param successCallback The callback to be executed when the call completes successfully.
          * @param failureCallback The callback to be executed when the call fails.
          */
-        downloadIssue(id: string, successCallback: () => void, failureCallback: (error: string) => void): void;
+        downloadIssue(id: string, successCallback?: () => void, failureCallback?: (error: string) => void): void;
 
         /**
          * Used to cancel the current background download.
@@ -38,7 +38,7 @@ declare module ContentManagerPlugin {
          * @param successCallback The callback to be executed when the call completes successfully.
          * @param failureCallback The callback to be executed when the call fails.
          */
-        cancelDownload(successCallback: () => void, failureCallback: (error: string) => void): void;
+        cancelDownload(successCallback?: () => void, failureCallback?: (error: string) => void): void;
 
         /**
          * Used to check the background download status.
@@ -46,7 +46,7 @@ declare module ContentManagerPlugin {
          * @param successCallback The callback to be executed when the call completes successfully.
          * @param failureCallback The callback to be executed when the call fails.
          */
-        getDownloadStatus(successCallback: (status: DownloadStatus) => void, failureCallback: (error: string) => void): void;
+        getDownloadStatus(successCallback?: (status: DownloadStatus) => void, failureCallback?: (error: string) => void): void;
 
         /**
          * Used to check the result of the last download.
@@ -54,7 +54,7 @@ declare module ContentManagerPlugin {
          * @param successCallback The callback to be executed when the call completes successfully.
          * @param failureCallback The callback to be executed when the call fails.
          */
-        getLastDownloadResult(successCallback: (status: DownloadResult) => void, failureCallback: (error: string) => void): void;
+        getLastDownloadResult(successCallback?: (status: DownloadResult) => void, failureCallback?: (error: string) => void): void;
 
         /**
          * Used to remove the given issue from the device.
@@ -63,7 +63,7 @@ declare module ContentManagerPlugin {
          * @param successCallback The callback to be executed when the call completes successfully.
          * @param failureCallback The callback to be executed when the call fails.
          */
-        deleteIssue(id: string, successCallback: () => void, failureCallback: (error: string) => void): void;
+        deleteIssue(id: string, successCallback?: () => void, failureCallback?: (error: string) => void): void;
 
         /**
          * Used to remove the given issue from the device.
@@ -72,7 +72,7 @@ declare module ContentManagerPlugin {
          * @param successCallback The callback to be executed when the call completes successfully.
          * @param failureCallback The callback to be executed when the call fails.
          */
-        getIssueContentXML(id: string, successCallback: (contentXML: string) => void, failureCallback: (error: string) => void): void;
+        getIssueContentXML(id: string, successCallback?: (contentXML: string) => void, failureCallback?: (error: string) => void): void;
     }
 
     interface DownloadedIssue {

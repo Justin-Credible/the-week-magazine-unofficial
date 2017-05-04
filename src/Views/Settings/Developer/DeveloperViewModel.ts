@@ -3,6 +3,12 @@
     export class DeveloperViewModel {
         mockApiRequests: boolean;
 
+        downloadStatus: ContentManagerPlugin.DownloadStatus;
+        downloadResult: ContentManagerPlugin.DownloadResult;
+
+        downloadStatusJSON: string;
+        downloadResultJSON: string;
+
         isWebPlatform: boolean;
         isWebStandalone: boolean;
         devicePlatform: string;
