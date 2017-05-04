@@ -6,17 +6,23 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipEntry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -42,6 +48,7 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
     protected DownloadResult doInBackground(String... params) {
 
         try {
+
             // It is possible the user cancelled before the task even kicked off.
             if (this.isCancelled()) {
                 DownloadResult result = new DownloadResult("Download was cancelled before it started.");
@@ -49,8 +56,14 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
                 return result;
             }
 
+            // *************************************************************************************
+            // Parameter Setup
+
             // The is the ID of the issue we want to download.
             String id = params[0];
+
+            // The user agent to use for all HTTP requests.
+            String userAgent = "PugpigNetwork 2.7.1, 1301 (iPhone, iOS 10.2) on phone";
 
             // Publish the initial status update.
 
@@ -61,7 +74,9 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
             status.percentage = 0;
             this.publishProgress(status);
 
-            // Create the directory for this issue.
+            // *************************************************************************************
+            // Setup Directories
+
             // If the directory already exists from a failed download, delete it first.
 
             String issueDirPath = combinePaths(baseStorageDir, "issues");
@@ -73,16 +88,38 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
                 Boolean deleteSuccess = issueDir.delete();
 
                 if (!deleteSuccess) {
-                    return new DownloadResult(MessageFormat.format("Unable to delete existing directory: {0}", issueDir));
+                    return new DownloadResult(MessageFormat.format("Unable to delete existing directory: {0}", issueDirPath));
                 }
             }
+
+            // Create the directory for the issue.
 
             Boolean createDirSuccess = issueDir.mkdirs();
 
             if (!createDirSuccess) {
-                return new DownloadResult(MessageFormat.format("Unable to create directory: {0}", issueDir));
+                return new DownloadResult(MessageFormat.format("Unable to create issue directory: {0}", issueDirPath));
             }
 
+            // Create the directory for the ZIP file downloads.
+
+            String downloadDirPath = combinePaths(issueDirPath, "_downloads");
+            File downloadDir = new File(downloadDirPath);
+
+            if (downloadDir.isDirectory() && downloadDir.exists()) {
+                Boolean deleteSuccess = downloadDir.delete();
+
+                if (!deleteSuccess) {
+                    return new DownloadResult(MessageFormat.format("Unable to delete existing directory: {0}", downloadDirPath));
+                }
+            }
+
+            createDirSuccess = downloadDir.mkdirs();
+
+            if (!createDirSuccess) {
+                return new DownloadResult(MessageFormat.format("Unable to create download directory: {0}", downloadDirPath));
+            }
+
+            // *************************************************************************************
             // Download the content.xml file for the issue.
 
             if (this.isCancelled()) {
@@ -95,23 +132,8 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
             status.percentage = 5;
             this.publishProgress(status);
 
-            String userAgent = "PugpigNetwork 2.7.1, 1301 (iPhone, iOS 10.2) on phone";
             String xmlURL = MessageFormat.format("{0}/editions/{1}/content.xml", baseContentURL, id);
-            String xml;
-
-            try {
-                xml = httpGet(xmlURL, userAgent);
-            }
-            catch (Exception exception) {
-
-                String message = MessageFormat.format("An exception occurred during an HTTP request to: {0}\nException Message: {1}", xmlURL, exception.getMessage());
-
-                DownloadResult result = new DownloadResult(message);
-                result.cancelled = false;
-                result.success = false;
-
-                return result;
-            }
+            String xml = httpGet(xmlURL, userAgent);
 
             // We should have received the XML body at this point.
             if (xml == null || xml.equals("")) {
@@ -125,7 +147,12 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
                 return result;
             }
 
+            // *************************************************************************************
             // Write XML body to content.xml
+
+            status.statusText = "Saving issue manifest";
+            status.percentage = 7;
+            this.publishProgress(status);
 
             String contentXMLPath = combinePaths(issueDirPath, "content.xml");
             writeFile(contentXMLPath, xml);
@@ -136,10 +163,11 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
                 return result;
             }
 
-            status.statusText = "Reading issue manifest";
+            status.statusText = "Parsing issue manifest";
             status.percentage = 10;
             this.publishProgress(status);
 
+            // *************************************************************************************
             // Parse the XML into a document and query for all the entry nodes.
 
             Document document = getDocument(xml);
@@ -151,10 +179,10 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
             NodeList entries = (NodeList) entryExpression.evaluate(document, XPathConstants.NODESET);
 
             // This will hold the ZIP file name for the shared theme.
-            String themePackagePath = null;
+            String themePackageURL = null;
 
             // This will hold the ZIP file names for each of the articles.
-            ArrayList<String> articlePackagePaths = new ArrayList<String>();
+            ArrayList<String> articleURLs = new ArrayList<String>();
 
             // Loop over each of the entry nodes.
             for (int i = 0; i < entries.getLength(); i++) {
@@ -163,7 +191,7 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
 
                 NodeList childNodes = entryNode.getChildNodes();
 
-                String articlePackagePath = null;
+                String articleURL = null;
 
                 // Loop over each of the child nodes for the entry to get the article ZIP package
                 // name for each as well as the first shared theme ZIP package name we find.
@@ -171,7 +199,7 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
 
                     // If we've already determined the paths for this entry node there is no
                     // need to continue iterating the link nodes.
-                    if (themePackagePath != null || articlePackagePath != null) {
+                    if (themePackageURL != null || articleURL != null) {
                         break;
                     }
 
@@ -197,22 +225,23 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
                     }
 
                     // If we haven't determined a theme yet, check to see if this is a theme.
-                    if (themePackagePath == null && href.contains("pp-shared-theme")) {
-                        themePackagePath = href;
+                    if (themePackageURL == null && href.contains("pp-shared-theme")) {
+                        themePackageURL = buildAssetURLFromFragment(href, baseContentURL);
                     }
 
                     // If we haven't determined an article yet, check to see if this is an article.
-                    if (articlePackagePath == null && href.contains("pp-article")) {
-                        articlePackagePath = href;
+                    if (articleURL == null && href.contains("pp-article")) {
+                        articleURL = buildAssetURLFromFragment(href, baseContentURL);
                     }
                 }
 
                 // If we were able to find a ZIP file for an article package, add it to the list.
-                if (articlePackagePath != null) {
-                    articlePackagePaths.add(articlePackagePath);
+                if (articleURL != null) {
+                    articleURLs.add(articleURL);
                 }
             }
 
+            // *************************************************************************************
             // Download the shared theme ZIP file.
 
             if (this.isCancelled()) {
@@ -225,8 +254,12 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
             status.percentage = 15;
             this.publishProgress(status);
 
-            // TODO
+            String themePackageFileName = getFileNameFromURL(themePackageURL);
+            String themePackagePath = combinePaths(downloadDirPath, themePackageFileName);
 
+            httpGetDownload(themePackageURL, userAgent, themePackagePath);
+
+            // *************************************************************************************
             // Loop over each article ZIP and download them.
 
             if (this.isCancelled()) {
@@ -235,21 +268,39 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
                 return result;
             }
 
+            // We arbitrarily choose 20% to be when we start downloading files.
+            int downloadBasePercentage = 20;
+
             status.statusText = "Downloading articles";
-            status.percentage = 20;
+            status.percentage = downloadBasePercentage;
             this.publishProgress(status);
 
-            // TODO: 60 percentage points allocated for the files; determine how many percent per file.
+            // We have 60 percentage points allocated for downloading of the files. The first var is
+            // the running total of percentage points while downloading, and the fragment is calculated
+            // so we know how many percentage points each file should count for.
+            double downloadPercentage = 0.0;
+            double downloadPercentageFragment = 60 / articleURLs.size();
 
-            for (String articleZip : articlePackagePaths) {
-                // TODO
-                // TODO Strip leading ../.. in path
-                // TODO Build URL
-                // TODO Retrieve file
-                // TODO Write to disk
-                // TODO Increment percentage
+            for (String articleURL : articleURLs) {
+
+                if (this.isCancelled()) {
+                    DownloadResult result = new DownloadResult("Download was cancelled.");
+                    result.cancelled = true;
+                    return result;
+                }
+
+                String articleFileName = getFileNameFromURL(articleURL);
+                String articleFilePath = combinePaths(downloadDirPath, articleFileName);
+
+                httpGetDownload(articleURL, userAgent, articleFilePath);
+
+                // Increment the percentage and then add to the base percentage for the update.
+                downloadPercentage += downloadPercentageFragment;
+                status.percentage = downloadBasePercentage + (int)Math.floor(downloadPercentage);
+                this.publishProgress(status);
             }
 
+            // *************************************************************************************
             // Loop over each article ZIP we downloaded earlier and extract the contents.
 
             if (this.isCancelled()) {
@@ -258,18 +309,30 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
                 return result;
             }
 
+            // We arbitrarily choose 80% to be when we start extracting files.
+            int extractBasePercentage = 80;
+
             status.statusText = "Unpacking articles";
-            status.percentage = 80;
+            status.percentage = extractBasePercentage;
             this.publishProgress(status);
 
-            // TODO: 19 percentage points allocated for the extraction; determine how many percent per file.
+            // We have 19 percentage points allocated for extracting of the files. The first var is
+            // the running total of percentage points while extracting, and the fragment is calculated
+            // so we know how many percentage points each file should count for.
+            double extractPercentage = 0.0;
+            double extractPercentageFragment = 19 / downloadDir.listFiles().length;
 
-            // TODO Get ZIPs on disk
-            // for (String zip : zipsOnDisk) {
-            //     TODO Extract
-            //     TODO increment percentage
-            // }
+             for (File downloadedFile : downloadDir.listFiles()) {
 
+                 unzip(downloadedFile, issueDir);
+
+                 // Increment the percentage and then add to the base percentage for the update.
+                 extractPercentage += extractPercentageFragment;
+                 status.percentage = extractBasePercentage + (int)Math.floor(extractPercentage);
+                 this.publishProgress(status);
+             }
+
+            // *************************************************************************************
             // Write an empty file that is used to indicate a successful download.
 
             status.statusText = "Finalizing";
@@ -279,6 +342,7 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
             String completeTagPath = combinePaths(issueDirPath, "complete.id");
             writeFile(completeTagPath, "");
 
+            // *************************************************************************************
             // Update the final statuses and return from the task.
 
             status.percentage = 100;
@@ -306,8 +370,8 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
     /**
      * A quick and dirty way to combines two path fragments.
      *
-     * @param path1
-     * @param path2
+     * @param path1 The first part of the path.
+     * @param path2 The second part of the path.
      * @return The combination of the two paths.
      */
     private String combinePaths(String path1, String path2)
@@ -333,19 +397,74 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
             writer = new PrintWriter(path);
             writer.println(contents);
         }
-        catch (Exception exception) {
-            throw exception;
+        finally {
+
+            if (writer != null) {
+                writer.close();
+            }
+        }
+    }
+
+    /**
+     * Used to extract the contents of a ZIP file to the given location.
+     *
+     * http://stackoverflow.com/a/27050680
+     *
+     * @param zipFile The ZIP file to read.
+     * @param targetDirectory The location to extract the files to.
+     */
+    public static void unzip(File zipFile, File targetDirectory) throws IOException {
+
+        ZipInputStream zis = new ZipInputStream(
+                new BufferedInputStream(new FileInputStream(zipFile)));
+
+        try {
+            ZipEntry ze;
+            int count;
+            byte[] buffer = new byte[8192];
+
+            while ((ze = zis.getNextEntry()) != null) {
+
+                File file = new File(targetDirectory, ze.getName());
+                File dir = ze.isDirectory() ? file : file.getParentFile();
+
+                if (!dir.isDirectory() && !dir.mkdirs()) {
+                    throw new FileNotFoundException("Failed to ensure directory: " +
+                            dir.getAbsolutePath());
+                }
+
+                if (ze.isDirectory()) {
+                    continue;
+                }
+
+                FileOutputStream outputStream = new FileOutputStream(file);
+
+                try {
+                    while ((count = zis.read(buffer)) != -1)
+                        outputStream.write(buffer, 0, count);
+                }
+                finally {
+                    outputStream.close();
+                }
+
+                /* if time should be restored as well
+                long time = ze.getTime();
+                if (time > 0)
+                    file.setLastModified(time);
+                */
+
+            }
         }
         finally {
-            writer.close();
+            zis.close();
         }
     }
 
     /**
      * Parses the given XML and returns a document object.
      *
-     * @param xml
-     * @return
+     * @param xml The raw XML string to parse.
+     * @return The parsed XML document.
      * @throws Exception
      */
     private Document getDocument(String xml) throws Exception {
@@ -354,9 +473,7 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
-        Document document = db.parse(source);
-
-        return document;
+        return db.parse(source);
     }
 
     /**
@@ -395,7 +512,7 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
 
         String attributeValue = attribute == null ? null : attribute.getNodeValue();
 
-        return attributeValue == null ? false : attributeValue.equals(value);
+        return attributeValue != null && attributeValue.equals(value);
     }
 
     /**
@@ -423,9 +540,6 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
 
             return result.toString();
         }
-        catch (Exception exception) {
-            throw exception;
-        }
         finally {
 
             if (reader != null) {
@@ -438,21 +552,22 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
      * Used to perform an HTTP get and retrieve it's response body.
      *
      * @param url The URL of the resource to request with a HTTP GET.
+     * @param userAgent The value of the User-Agent header sent with the request.
      * @return The response body as a string.
      * @throws Exception
      */
     private String httpGet(String url, String userAgent) throws Exception {
 
-        HttpURLConnection httpURLConnection = null;
+        HttpURLConnection connection = null;
         InputStream stream = null;
 
         try {
 
-            URLConnection connection = new URL(url).openConnection();
+            connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setRequestMethod("GET");
             connection.setRequestProperty("User-Agent", userAgent);
 
-            HttpURLConnection httpConnection = (HttpURLConnection) connection;
-            int responseCode = httpConnection.getResponseCode();
+            int responseCode = connection.getResponseCode();
 
             if (responseCode != 200) {
                 String message = MessageFormat.format("A non-200 status code was encountered ({0}) when requesting the URL: {1}", responseCode, url);
@@ -461,22 +576,107 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
 
             stream = connection.getInputStream();
 
-            String content = readStream(stream);
-
-            return content;
-        }
-        catch (Exception exception) {
-            throw exception;
+            return readStream(stream);
         }
         finally {
 
-            if (httpURLConnection != null) {
-                httpURLConnection.disconnect();
+            if (connection != null) {
+                connection.disconnect();
             }
 
             if (stream != null) {
                 stream.close();
             }
         }
+    }
+
+    /**
+     * Used to perform an HTTP get and retrieve it's response body and write it to disk as a file.
+     *
+     * @param url The URL of the resource to request with a HTTP GET.
+     * @param userAgent The value of the User-Agent header sent with the request.
+     * @param filePath The path of the file to write.
+     * @throws Exception
+     */
+    private void httpGetDownload(String url, String userAgent, String filePath) throws Exception {
+
+        HttpURLConnection connection = null;
+        InputStream inputStream = null;
+
+        try {
+
+            connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("User-Agent", userAgent);
+
+            int responseCode = connection.getResponseCode();
+
+            if (responseCode != 200) {
+                String message = MessageFormat.format("A non-200 status code was encountered ({0}) when requesting the URL: {1}", responseCode, url);
+                throw new Exception(message);
+            }
+
+            FileOutputStream outputStream = new FileOutputStream(filePath);
+            inputStream = connection.getInputStream();
+
+            byte[] buffer = new byte[1024];
+            int bufferLength;
+
+            while ((bufferLength = inputStream.read(buffer)) > 0 ) {
+                outputStream.write(buffer, 0, bufferLength);
+            }
+
+            outputStream.close();
+        }
+        finally {
+
+            if (connection != null) {
+                connection.disconnect();
+            }
+
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        }
+    }
+
+    /**
+     * Quick and dirty way to get the "file name" portion of a URL.
+     *
+     * Currently, just returns the remaining characters after the last forward slash.
+     *
+     * @param url The URL to obtain a file name from.
+     * @return The file name from the given URL.
+     */
+    private String getFileNameFromURL(String url) {
+
+        if (url == null) {
+            return null;
+        }
+
+        return url.substring(url.lastIndexOf("/") + 1, url.length());
+    }
+
+    /**
+     * Takes a relative path to an asset (i.e. article ZIP) and returns an absolute URL.
+     *
+     * @param assetFragmentPath The relative asset path.
+     * @param baseContentURL The absolute base path URL used to build the full URL.
+     * @return A relative URL for the given resource.
+     */
+    private String buildAssetURLFromFragment(String assetFragmentPath, String baseContentURL) {
+
+        if (assetFragmentPath == null) {
+            return null;
+        }
+
+        // The asset path fragments from content.xml are relative to content.xml.
+        // Technically, this should be resolved against the content.xml URL, but I'll
+        // just hardcode this for now. Two directories up from the XML file is the root.
+        if (assetFragmentPath.startsWith("../../")) {
+            assetFragmentPath = assetFragmentPath.replace("../../", "");
+        }
+
+        return MessageFormat.format("{0}/{1}", baseContentURL, assetFragmentPath);
     }
 }
