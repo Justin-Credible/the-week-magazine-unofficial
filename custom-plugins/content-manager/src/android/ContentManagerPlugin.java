@@ -8,6 +8,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +43,7 @@ public final class ContentManagerPlugin extends CordovaPlugin {
         else if (action.equals("getDownloadedIssues")) {
 
             try {
-                this.getDownloadedIssues(args, callbackContext);
+                this.getDownloadedIssues(callbackContext);
             }
             catch (Exception exception) {
                 callbackContext.error("ContentManagerPlugin.getDownloadedIssues() uncaught exception: " + exception.getMessage());
@@ -63,7 +65,7 @@ public final class ContentManagerPlugin extends CordovaPlugin {
         else if (action.equals("cancelDownload")) {
 
             try {
-                this.cancelDownload(args, callbackContext);
+                this.cancelDownload(callbackContext);
             }
             catch (Exception exception) {
                 callbackContext.error("ContentManagerPlugin.cancelDownload() uncaught exception: " + exception.getMessage());
@@ -74,7 +76,7 @@ public final class ContentManagerPlugin extends CordovaPlugin {
         else if (action.equals("getDownloadStatus")) {
 
             try {
-                this.getDownloadStatus(args, callbackContext);
+                this.getDownloadStatus(callbackContext);
             }
             catch (Exception exception) {
                 callbackContext.error("ContentManagerPlugin.getDownloadStatus() uncaught exception: " + exception.getMessage());
@@ -85,7 +87,7 @@ public final class ContentManagerPlugin extends CordovaPlugin {
         else if (action.equals("getLastDownloadResult")) {
 
             try {
-                this.getLastDownloadResult(args, callbackContext);
+                this.getLastDownloadResult(callbackContext);
             }
             catch (Exception exception) {
                 callbackContext.error("ContentManagerPlugin.getLastDownloadResult() uncaught exception: " + exception.getMessage());
@@ -139,9 +141,40 @@ public final class ContentManagerPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
-    private synchronized void getDownloadedIssues(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+    private synchronized void getDownloadedIssues(final CallbackContext callbackContext) throws JSONException {
 
-        callbackContext.error("TODO: Not implemented.");
+        JSONArray array = new JSONArray();
+
+        Context appContext = this.cordova.getActivity().getApplicationContext();
+        String baseStorageDir = appContext.getFilesDir().toString();
+
+        String issuesDirPath = Utilities.combinePaths(baseStorageDir, "issues");
+
+        File issuesDir = new File(issuesDirPath);
+
+        if (!issuesDir.exists() || !issuesDir.isDirectory()) {
+            callbackContext.success(array);
+            return;
+        }
+
+        for (File childFile : issuesDir.listFiles()) {
+
+            if (!childFile.isDirectory()) {
+                continue;
+            }
+
+            String completeTagPath = Utilities.combinePaths(childFile.getAbsolutePath(), "complete.id");
+
+            File completeTagFile = new File(completeTagPath);
+
+            JSONObject issue = new JSONObject();
+            issue.put("id", childFile.getName());
+            issue.put("ok", completeTagFile.exists());
+
+            array.put(issue);
+        }
+
+        callbackContext.success(array);
     }
 
     private synchronized void downloadIssue(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
@@ -210,7 +243,7 @@ public final class ContentManagerPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
-    private synchronized void cancelDownload(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+    private synchronized void cancelDownload(final CallbackContext callbackContext) throws JSONException {
 
         if (currentDownloadTask == null) {
             callbackContext.error("A download is not currently in progress.");
@@ -222,7 +255,7 @@ public final class ContentManagerPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
-    private synchronized void getDownloadStatus(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+    private synchronized void getDownloadStatus(final CallbackContext callbackContext) throws JSONException {
 
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("inProgress", currentDownloadStatus.inProgress);
@@ -233,7 +266,7 @@ public final class ContentManagerPlugin extends CordovaPlugin {
         callbackContext.success(new JSONObject(resultMap));
     }
 
-    private synchronized void getLastDownloadResult(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+    private synchronized void getLastDownloadResult(final CallbackContext callbackContext) throws JSONException {
 
         if (lastDownloadResult == null) {
             callbackContext.success();
@@ -247,14 +280,66 @@ public final class ContentManagerPlugin extends CordovaPlugin {
         callbackContext.success(new JSONObject(resultMap));
     }
 
-    private synchronized void deleteIssue(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+    private synchronized void deleteIssue(final JSONArray args, final CallbackContext callbackContext) throws Exception {
 
-        callbackContext.error("TODO: Not implemented.");
+        String id = args.getString(0);
+
+        if (id == null || id.equals("")) {
+            callbackContext.error("An issue ID is required to delete an issue.");
+            return;
+        }
+
+        Context appContext = this.cordova.getActivity().getApplicationContext();
+        String baseStorageDir = appContext.getFilesDir().toString();
+
+        String issueDirPath = Utilities.combinePaths(baseStorageDir, "issues");
+        issueDirPath = Utilities.combinePaths(issueDirPath, id);
+
+        File issueDir = new File(issueDirPath);
+
+        if (!issueDir.exists() || !issueDir.isDirectory()) {
+            callbackContext.error(MessageFormat.format("An issue directory for ID '{0}' was not found.", id));
+            return;
+        }
+
+        Utilities.deleteDir(issueDir);
+
+        callbackContext.success();
     }
 
-    private synchronized void getIssueContentXML(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+    private synchronized void getIssueContentXML(final JSONArray args, final CallbackContext callbackContext) throws Exception {
 
-        callbackContext.error("TODO: Not implemented.");
+        String id = args.getString(0);
+
+        if (id == null || id.equals("")) {
+            callbackContext.error("An issue ID is required to retrieve content XML for an issue.");
+            return;
+        }
+
+        Context appContext = this.cordova.getActivity().getApplicationContext();
+        String baseStorageDir = appContext.getFilesDir().toString();
+
+        String issueDirPath = Utilities.combinePaths(baseStorageDir, "issues");
+        issueDirPath = Utilities.combinePaths(issueDirPath, id);
+
+        File issueDir = new File(issueDirPath);
+
+        if (!issueDir.exists() || !issueDir.isDirectory()) {
+            callbackContext.error(MessageFormat.format("An issue with ID '{0}' was not found.", id));
+            return;
+        }
+
+        String contentXMLPath = Utilities.combinePaths(issueDirPath, "content.xml");
+        File contentXMLFile = new File(contentXMLPath);
+
+        if (!contentXMLFile.exists()) {
+            callbackContext.error(MessageFormat.format("An content.xml manifest for issue with ID '{0}' was not found.", id));
+            return;
+        }
+
+        String contentXML = Utilities.readFile(contentXMLPath);
+
+        callbackContext.success(contentXML);
     }
 
     //endregion

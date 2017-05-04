@@ -48,7 +48,7 @@ public class Utilities {
      *
      * @param file The directory to remove.
      */
-    public static void deleteDir(File file) {
+    public static void deleteDir(File file) throws Exception {
 
         File[] contents = file.listFiles();
 
@@ -58,7 +58,34 @@ public class Utilities {
             }
         }
 
-        file.delete();
+        boolean success = file.delete();
+
+        if (!success) {
+            throw new Exception(MessageFormat.format("Unable to delete '{0}'", file.getAbsolutePath()));
+        }
+    }
+
+    /**
+     * A simple helper to read a file.
+     *
+     * @param path The path to read from.
+     * @return The contents of the file as a string.
+     * @throws Exception
+     */
+    public static String readFile(String path) throws Exception {
+
+        FileInputStream fileInputStream = null;
+
+        try {
+            fileInputStream = new FileInputStream(path);
+            return readStream(fileInputStream);
+        }
+        finally {
+
+            if (fileInputStream != null) {
+                fileInputStream.close();
+            }
+        }
     }
 
     /**

@@ -312,6 +312,11 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
              }
 
             // *************************************************************************************
+            // Clean up the downloads directory.
+
+            Utilities.deleteDir(downloadDir);
+
+            // *************************************************************************************
             // Write an empty file that is used to indicate a successful download.
 
             status.statusText = "Finalizing";
