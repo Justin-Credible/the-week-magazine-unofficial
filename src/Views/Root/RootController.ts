@@ -11,6 +11,7 @@
                 "$scope",
                 "$location",
                 "$http",
+                Services.Configuration.ID,
                 Services.Plugins.ID,
                 Services.UIHelper.ID,
                 Services.Preferences.ID
@@ -21,6 +22,7 @@
             $scope: ng.IScope,
             private $location: ng.ILocationService,
             private $http: ng.IHttpService,
+            private Configuration: Services.Configuration,
             private Plugins: Services.Plugins,
             private UIHelper: Services.UIHelper,
             private Preferences: Services.Preferences) {
@@ -51,6 +53,10 @@
             this.scope.$on(Constants.Events.HTTP_NOT_FOUND, _.bind(this.http_notFound, this));
             this.scope.$on(Constants.Events.HTTP_UNKNOWN_ERROR, _.bind(this.http_unknownError, this));
             this.scope.$on(Constants.Events.HTTP_ERROR, _.bind(this.http_error, this));
+
+            this.viewModel.applicationName = this.Configuration.values.appName;
+            this.viewModel.isDebugMode = this.Configuration.debug;
+            this.viewModel.isDeveloperMode = this.Configuration.enableDeveloperTools;
         }
 
         //#endregion

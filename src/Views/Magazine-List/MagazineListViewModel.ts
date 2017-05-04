@@ -6,5 +6,9 @@ namespace JustinCredible.TheWeek.ViewModels {
         public loadError: boolean;
 
         public issues: Models.MagazineIssue[];
+
+        public downloadedIssueMap: Interfaces.Dictionary<boolean>;
+
+        public downloadStatus: ContentManagerPlugin.DownloadStatus;
     }
 }

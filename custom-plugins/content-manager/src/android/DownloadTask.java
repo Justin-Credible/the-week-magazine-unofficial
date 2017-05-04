@@ -303,6 +303,12 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
 
              for (File downloadedFile : downloadDir.listFiles()) {
 
+                 if (this.isCancelled()) {
+                     DownloadResult result = new DownloadResult("Download was cancelled.");
+                     result.cancelled = true;
+                     return result;
+                 }
+
                  Utilities.unzip(downloadedFile, issueDir);
 
                  // Increment the percentage and then add to the base percentage for the update.
@@ -313,6 +319,12 @@ public class DownloadTask extends AsyncTask<String, DownloadStatus, DownloadResu
 
             // *************************************************************************************
             // Clean up the downloads directory.
+
+            if (this.isCancelled()) {
+                DownloadResult result = new DownloadResult("Download was cancelled.");
+                result.cancelled = true;
+                return result;
+            }
 
             Utilities.deleteDir(downloadDir);
 

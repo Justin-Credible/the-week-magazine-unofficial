@@ -9,6 +9,7 @@
 
 // Common/Shared
 @import "Common/Devices";
+@import "Common/Inline-Loader";
 @import "Common/Misc-Layout";
 @import "Common/Overlay-Spinner";
 
@@ -16,3 +17,4 @@
 @import "../Directives/Icon-Panel/Icon-Panel";
 
 // Views
+@import "../Views/Magazine-List/Magazine-List";

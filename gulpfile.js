@@ -49,6 +49,7 @@ gulp.task("libs", getTask("libs"));
 gulp.task("minify", getTask("minify"));
 gulp.task("templates", getTask("templates"));
 gulp.task("sass", getTask("sass"));
+gulp.task("platforms", getTask("platforms"));
 
 gulp.task("clean", ["clean:node", "clean:config", "clean:bower", "clean:platforms", "clean:plugins", "clean:build", "clean:libs", "clean:ts", "clean:tsd", "clean:templates", "clean:sass"]);
 gulp.task("clean:node", getTask("clean/clean:node"));

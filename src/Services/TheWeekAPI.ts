@@ -28,6 +28,7 @@ namespace JustinCredible.TheWeek.Services {
             let config: Interfaces.RequestConfig = {
                 method: "GET",
                 url: "https://magazine.theweek.com/endpoint.xml",
+                blocking: false,
             };
 
             this.$http(config).then((result: ng.IHttpPromiseCallbackArg<any>) => {

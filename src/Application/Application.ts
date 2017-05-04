@@ -86,6 +86,14 @@ namespace JustinCredible.TheWeek {
             this.Plugins.keyboard.disableScroll(true);
             this.Plugins.keyboard.hideKeyboardAccessoryBar(false);
 
+            // Set the base content URL into the native code plugin.
+            this.Plugins.contentManager.setContentBaseURL(this.Configuration.values.contentUrl,
+                () => {
+                    this.Logger.info(Application.ID, "start", "The content manager's base content URL was successfully set.");
+                }, (error: any) => {
+                    this.Logger.error(Application.ID, "start", "An error occurred while setting the content manager's base content URL.", error);
+                });
+
             // Now that the platform is ready, we'll delegate to the resume handler.
             // We do this so the same code that fires on resume also fires when the
             // application is started for the first time.

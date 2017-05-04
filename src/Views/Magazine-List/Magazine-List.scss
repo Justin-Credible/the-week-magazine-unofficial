@@ -1,0 +1,29 @@
+
+.magazine-list {
+
+    .issue-thumbnail,
+    .item-thumbnail-left > img:first-child {
+        width: auto;
+        height: auto;
+        max-width: 85px;
+        max-height: 150px;
+    }
+
+    .progress-column {
+        padding-top: 14px;
+
+        .progress-bar-outer {
+            border: 1px solid #11c1f3;
+            display: block;
+            height: 11px;
+            position: relative;
+
+            .progress-bar-inner {
+                background-color: #11c1f3;
+                display: inline-block;
+                height: 10px;
+                position: absolute;
+            }
+        }
+    }
+}

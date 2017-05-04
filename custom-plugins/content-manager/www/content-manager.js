@@ -73,7 +73,7 @@ ContentManagerPlugin.downloadIssue = function downloadIssue(id, successCallback,
  */
 ContentManagerPlugin.cancelDownload = function cancelDownload(successCallback, failureCallback) {
 
-    exec(successCallback, failureCallback, PLUGIN_ID, "cancelDownload", [ id ]);
+    exec(successCallback, failureCallback, PLUGIN_ID, "cancelDownload", []);
 };
 
 /**

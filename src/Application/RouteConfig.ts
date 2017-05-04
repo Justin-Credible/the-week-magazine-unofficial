@@ -39,16 +39,6 @@ namespace JustinCredible.TheWeek {
 
             //#region Settings
 
-            $stateProvider.state("app.settings-list", {
-                url: "/settings/list",
-                views: {
-                    "root-view": {
-                        templateUrl: "Views/Settings/Settings-List/Settings-List.html",
-                        controller: Controllers.SettingsListController.ID
-                    }
-                }
-            });
-
             $stateProvider.state("app.developer", {
                 url: "/settings/developer",
                 views: {

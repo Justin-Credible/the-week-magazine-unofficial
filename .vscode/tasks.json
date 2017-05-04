@@ -57,6 +57,10 @@
             ]
         },
         {
+            "taskName": "platforms",
+            "showOutput": "never"
+        },
+        {
             "taskName": "templates",
             "showOutput": "never"
         },

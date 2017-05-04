@@ -784,4 +784,17 @@ module.exports = helper = {
 
         return cspParts.join("; ");
     },
+
+    /**
+     * Gets a list of directories in the given directory path.
+     * 
+     * @param srcPath The path to the directory to search.
+     */
+    getDirectories: function (srcPath) {
+
+        // http://stackoverflow.com/a/24594123
+        return fs.readdirSync(srcPath).filter(function(file) {
+            return fs.statSync(path.join(srcPath, file)).isDirectory();
+        });
+    },
 }

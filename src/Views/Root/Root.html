@@ -19,11 +19,27 @@
 
             <ion-list>
 
+                <ion-item class="item-divider">{{viewModel.applicationName}}</ion-item>
+
+                <ion-item class="item-icon-left menu-close"
+                    ui-sref="app.magazine-list">
+                    <i class="icon ion-ios-paper-outline"></i>
+                    Issues
+                </ion-item>
+
                 <ion-item class="item-divider">Preferences</ion-item>
 
-                <ion-item class="item-icon-left menu-close" ui-sref="app.settings-list">
-                    <i class="icon ion-android-settings"></i>
-                    Settings
+                <ion-item class="item-icon-left menu-close"
+                    ui-sref="app.developer"
+                    ng-show="viewModel.isDebugMode || viewModel.isDeveloperMode">
+                    <i class="icon ion-code-working"></i>
+                    Developer Tools
+                </ion-item>
+
+                <ion-item class="item-icon-left menu-close"
+                    ui-sref="app.about">
+                    <i class="icon ion-ios-information-outline"></i>
+                    About
                 </ion-item>
 
             </ion-list>

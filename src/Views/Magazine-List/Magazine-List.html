@@ -1,7 +1,7 @@
 <ion-view>
 
     <ion-nav-buttons side="left">
-        <button menu-toggle="left" class="button icon ion-navicon phone-both-tablet-portrait"></button>
+        <button menu-toggle="left" class="button button-icon icon ion-navicon phone-both-tablet-portrait"></button>
     </ion-nav-buttons>
 
     <ion-nav-title>
@@ -40,14 +40,81 @@
             on-refresh="controller.refresher_refresh()">
         </ion-refresher>
 
-        <div class="list">
+        <div class="list"
+            ng-hide="viewModel.loadError || viewModel.showSpinner">
+
+            <div class="item item-divider"
+                ng-if="viewModel.downloadedIssueMap">
+                Downloaded Issues
+            </div>
 
             <div ng-repeat="issue in viewModel.issues"
-                class="item item-thumbnail-left">
-                <img ng-src="{{issue.imageURL}}">
+                ng-if="viewModel.downloadedIssueMap[issue.id]"
+                class="item item-thumbnail-left item-text-wrap">
+                <img ng-src="{{issue.imageURL}}" class="issue-thumbnail">
                 <h2>{{issue.title}}</h2>
                 <p>{{issue.summary}}</p>
-                <p>{{issue.size}}</p>
+
+                <div class="row">
+                    <div class="col col-50">
+                        <button class="button button-block button-outline button-calm ion-close-round icon-left"
+                            ng-click="controller.deleteIssue_click(issue)">
+                            Delete
+                        </button>
+                    </div>
+                    <div class="col col-50">
+                        <button class="button button-block button-calm ion-chevron-right icon-right"
+                            ng-click="controller.readIssue_click(issue)">
+                            Read
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="item item-divider">
+                Available Issues
+            </div>
+
+            <div ng-repeat="issue in viewModel.issues"
+                ng-if="!viewModel.downloadedIssueMap[issue.id]"
+                class="item item-thumbnail-left item-text-wrap">
+                <img ng-src="{{issue.imageURL}}" class="issue-thumbnail">
+                <h2>{{issue.title}}</h2>
+                <p>{{issue.summary}}</p>
+
+                <button class="button button-block button-outline button-calm ion-android-download icon-left"
+                    ng-hide="viewModel.downloadStatus.inProgress && viewModel.downloadStatus.id === issue.id"
+                    ng-click="controller.downloadIssue_click(issue)">
+                    Download ({{issue.size}})
+                </button>
+
+                <div class="row"
+                    ng-show="viewModel.downloadStatus.inProgress && viewModel.downloadStatus.id === issue.id">
+
+                    <div class="col col-25 loading-column">
+                        <ion-spinner></ion-spinner>
+                    </div>
+
+                    <div class="col col-75 progress-column">
+                        <div class="progress-bar-outer">
+                            <div class="progress-bar-inner"
+                                ng-style="{ 'width': viewModel.downloadStatus.percentage + '%' }">
+                            </div>
+                        </div>
+                        <p>
+                            {{viewModel.downloadStatus.statusText}} ({{viewModel.downloadStatus.percentage}}%)
+                        </p>
+                    </div>
+
+                </div>
+
+                <button class="button button-block button-outline button-calm"
+                    ng-show="viewModel.downloadStatus.inProgress && viewModel.downloadStatus.id === issue.id"
+                    ng-click="controller.cancelDownload_click()">
+                    Cancel Download
+                </button>
+
             </div>
 
         </div>
