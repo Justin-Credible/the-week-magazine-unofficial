@@ -1,0 +1,23 @@
+
+.issue-content-list {
+
+    .cover-image {
+        text-align: center;
+
+        img {
+            max-width: 100%;
+        }
+    }
+
+    .item-divider {
+        background-color: $positive;
+        color: white;
+        font-weight: bold;
+    }
+
+    .item {
+        h2 {
+            font-weight: bold;
+        }
+    }
+}

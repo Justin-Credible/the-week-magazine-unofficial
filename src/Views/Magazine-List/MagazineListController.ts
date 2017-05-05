@@ -11,6 +11,7 @@ namespace JustinCredible.TheWeek.Controllers {
                 "$scope",
                 "$timeout",
                 "$interval",
+                "$state",
                 "$ionicScrollDelegate",
                 Services.Logger.ID,
                 Services.Plugins.ID,
@@ -24,6 +25,7 @@ namespace JustinCredible.TheWeek.Controllers {
             $scope: ng.IScope,
             private $timeout: ng.ITimeoutService,
             private $interval: ng.IIntervalService,
+            private $state: angular.ui.IStateService,
             private $ionicScrollDelegate: ionic.scroll.IonicScrollDelegate,
             private Logger: Services.Logger,
             private Plugins: Services.Plugins,
@@ -86,11 +88,7 @@ namespace JustinCredible.TheWeek.Controllers {
 
         private downloadStatus_intervalTick(): void {
 
-            this.Logger.debug(MagazineListController.ID, "downloadStatus_intervalTick", "hit!");
-
             this.Plugins.contentManager.getDownloadStatus((status: ContentManagerPlugin.DownloadStatus) => {
-
-                this.Logger.debug(MagazineListController.ID, "downloadStatus_intervalTick", "getDownloadStatus hit!", status);
 
                 if (status && status.inProgress) {
                     // Download is in progress; update status on view model.
@@ -98,8 +96,6 @@ namespace JustinCredible.TheWeek.Controllers {
                 }
                 else {
                     // If the download is no longer in progress...
-
-                    this.Logger.debug(MagazineListController.ID, "downloadStatus_intervalTick", "cancelling and refreshing", status);
 
                     this.viewModel.downloadStatus = null;
 
@@ -112,6 +108,8 @@ namespace JustinCredible.TheWeek.Controllers {
 
                         this.populateDownloadedIssuesMap(issues);
                         this.scope.$apply();
+
+                        this.$ionicScrollDelegate.scrollTop(true);
                     });
 
                     // Log and show a toast message depending on the result of the download.
@@ -141,7 +139,11 @@ namespace JustinCredible.TheWeek.Controllers {
         }
 
         protected readIssue_click(issue: Models.MagazineIssue): void {
-            this.Plugins.toast.showShortCenter("Not Implemented Yet...");
+
+            let param = new Models.IssueContentListParams();
+            param.issueID = issue.id;
+
+            this.$state.go("app.issue-content-list", param);
         }
 
         protected deleteIssue_click(issue: Models.MagazineIssue): void {
@@ -309,8 +311,6 @@ namespace JustinCredible.TheWeek.Controllers {
                     this.viewModel.issues.push(issue);
                 }
             }
-
-            this.Logger.debug(MagazineListController.ID, "populateViewModel", "vm", this.viewModel);
         }
 
         private populateDownloadedIssuesMap(issues: ContentManagerPlugin.DownloadedIssue[]): void {

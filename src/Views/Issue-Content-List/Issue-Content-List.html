@@ -1,0 +1,59 @@
+<ion-view>
+
+    <ion-nav-title>
+        Articles
+    </ion-nav-title>
+
+    <!-- Full-view spinner -->
+    <div class="inline-loader" ng-show="viewModel.showSpinner">
+        <div class="inline-spinner"></div>
+    </div>
+
+    <ion-content
+        class="issue-content-list">
+
+        <!-- Error loading panel -->
+        <div class="load-error-container"
+            ng-show="viewModel.loadError && !viewModel.showSpinner && !viewModel.isRefreshing">
+
+            <icon-panel
+                text="Unable to connect; please try again later."
+                icon="ion-ios-rainy-outline"
+                icon-size="170">
+            </icon-panel>
+
+            <div class="button-container-center">
+                <button class="button"
+                    ng-click="controller.retry_click()">Try Again</button>
+            </div>
+
+        </div>
+
+        <div class="list"
+            ng-hide="viewModel.loadError || viewModel.showSpinner">
+
+            <div class="item cover-image">
+                <img ng-src="{{viewModel.coverImageURL}}">
+            </div>
+
+            <div class="item item-divider"
+                ng-repeat-start="(sectionName, entries) in viewModel.articles">
+                {{sectionName}}
+            </div>
+
+            <div ng-repeat="entry in entries"
+                ng-repeat-end
+                class="item item-text-wrap item-icon-right"
+                ng-click="controller.article_click(entry)">
+
+                <h2>{{entry.title}}</h2>
+                <p>{{entry.summary.__text}}</p>
+
+                <i class="icon ion-chevron-right"></i>
+            </div>
+
+        </div>
+
+    </ion-content>
+
+</ion-view>

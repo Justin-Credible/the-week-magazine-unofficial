@@ -12,6 +12,10 @@ namespace JustinCredible.TheWeek.Interfaces.API {
         feed: Feed;
     }
 
+    export interface IssueContent {
+        feed: Feed;
+    }
+
     export interface Feed {
 
         generator: FeedGenerator;

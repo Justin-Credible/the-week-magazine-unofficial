@@ -13,6 +13,8 @@ namespace JustinCredible.TheWeek.Services {
             return [
                 "$q",
                 "$rootScope",
+                Logger.ID,
+                Plugins.ID,
                 TheWeekAPI.ID,
             ];
         }
@@ -20,6 +22,8 @@ namespace JustinCredible.TheWeek.Services {
         constructor(
             private $q: ng.IQService,
             private $rootScope: ng.IRootScopeService,
+            private Logger: Logger,
+            private Plugins: Plugins,
             private TheWeekAPI: TheWeekAPI) {
         }
 
@@ -64,6 +68,54 @@ namespace JustinCredible.TheWeek.Services {
                 q.resolve(feed);
 
             }).catch((error: any) => {
+                q.reject(new Error(error));
+            });
+
+            return q.promise;
+        }
+
+        private _issueContentCache: Interfaces.Dictionary<Models.CacheEntry<Interfaces.API.IssueContent>> = {};
+
+        /**
+         * Retrieves issue content.
+         */
+        public retrieveIssueContent(issueID: string, cacheBehavior?: Models.CacheBehavior): ng.IPromise<Interfaces.API.IssueContent> {
+            var q = this.$q.defer<Interfaces.API.IssueContent>();
+
+            if (cacheBehavior == null) {
+                cacheBehavior = Models.CacheBehavior.Default;
+            }
+
+            if (cacheBehavior === Models.CacheBehavior.Default) {
+                let entry = this._issueContentCache[issueID];
+
+                if (entry && !entry.hasExpired) {
+                    q.resolve(entry.item);
+                    return q.promise;
+                }
+            }
+            else if (cacheBehavior === Models.CacheBehavior.AllowStale) {
+                let entry = this._issueContentCache[issueID];
+
+                if (entry) {
+                    q.resolve(entry.item);
+                    return q.promise;
+                }
+            }
+
+            this.Plugins.contentManager.getIssueContentXML(issueID,
+                (contentXML: String) => {
+
+                let converter = new X2JS();
+                let issueContent: Interfaces.API.IssueContent = converter.xml_str2json(contentXML);
+
+                this.Logger.info(MagazineDataSource.ID, "retrieveIssueContent", "Parsed content XML result.", issueContent);
+
+                this._issueContentCache[issueID] = new Models.CacheEntry<Interfaces.API.IssueContent>(issueContent, this._defaultCacheDuration);
+
+                q.resolve(issueContent);
+
+            }, (error: any) => {
                 q.reject(new Error(error));
             });
 

@@ -106,6 +106,18 @@ namespace JustinCredible.TheWeek.Services {
         }
 
         /**
+         * Exposes an API for working with a native web view.
+         */
+        get inAppBrowser(): InAppBrowser {
+            if (typeof(cordova) !== "undefined" && cordova.InAppBrowser) {
+                return cordova.InAppBrowser;
+            }
+            else {
+                return this.MockPlatformApis.getInAppBrowser();
+            }
+        }
+
+        /**
          * Exposes the Content Manager for working with issue data.
          */
         get contentManager(): ContentManagerPlugin.ContentManagerPluginStatic {

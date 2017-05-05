@@ -36,7 +36,7 @@ namespace JustinCredible.TheWeek.Services {
                 let converter = new X2JS();
                 let endpointResponse: Interfaces.API.EndpointResponse = converter.xml_str2json(result.data);
 
-                this.Logger.debug(TheWeekAPI.ID, "retrieveIssueFeed", "Parsed endpoint XML result.", endpointResponse);
+                this.Logger.info(TheWeekAPI.ID, "retrieveIssueFeed", "Parsed endpoint XML result.", endpointResponse);
 
                 q.resolve(endpointResponse.feed);
 

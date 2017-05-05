@@ -37,6 +37,17 @@ namespace JustinCredible.TheWeek {
                 }
             });
 
+            $stateProvider.state("app.issue-content-list", {
+                url: "/issue/list",
+                views: {
+                    "root-view": {
+                        templateUrl: "Views/Issue-Content-List/Issue-Content-List.html",
+                        controller: Controllers.IssueContentListController.ID,
+                    }
+                },
+                params: new Models.IssueContentListParams(),
+            });
+
             //#region Settings
 
             $stateProvider.state("app.developer", {

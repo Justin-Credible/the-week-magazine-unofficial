@@ -116,6 +116,10 @@
             };
         }
 
+        public getInAppBrowser(): InAppBrowser {
+            return <any>window;
+        }
+
         public getContentManagerPlugin(): ContentManagerPlugin.ContentManagerPluginStatic {
             return {
                 setContentBaseURL: _.bind(this.noOp, this),
