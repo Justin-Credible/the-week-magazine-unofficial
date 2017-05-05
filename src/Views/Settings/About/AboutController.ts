@@ -58,6 +58,7 @@
             if (this.viewModel.logoClickCount > 9) {
                 this.Configuration.enableDeveloperTools = true;
                 this.Plugins.toast.showShortBottom("Development Tools Enabled!");
+                this.scope.$emit(Constants.Events.APP_DEV_TOOLS_ENABLED);
                 this.$ionicHistory.goBack();
             }
         }

@@ -48,6 +48,8 @@
 
             this._hasLoaded = true;
 
+            this.scope.$on(Constants.Events.APP_DEV_TOOLS_ENABLED, _.bind(this.app_devToolsEnabled, this));
+
             this.scope.$on(Constants.Events.HTTP_UNAUTHORIZED, _.bind(this.http_unauthorized, this));
             this.scope.$on(Constants.Events.HTTP_FORBIDDEN, _.bind(this.http_forbidden, this));
             this.scope.$on(Constants.Events.HTTP_NOT_FOUND, _.bind(this.http_notFound, this));
@@ -62,6 +64,10 @@
         //#endregion
 
         //#region Event Handlers
+
+        private app_devToolsEnabled(event: ng.IAngularEvent, response: ng.IHttpPromiseCallbackArg<any>) {
+            this.viewModel.isDeveloperMode = true;
+        }
 
         private http_unauthorized(event: ng.IAngularEvent, response: ng.IHttpPromiseCallbackArg<any>) {
 

@@ -98,15 +98,15 @@ namespace JustinCredible.TheWeek.Services {
         //#region Framework Settings
 
         get enableDeveloperTools(): boolean {
-            return sessionStorage.getItem(Configuration.ENABLE_DEVELOPER_TOOLS) === "true";
+            return localStorage.getItem(Configuration.ENABLE_DEVELOPER_TOOLS) === "true";
         }
 
         set enableDeveloperTools(value: boolean) {
             if (value == null) {
-                sessionStorage.removeItem(Configuration.ENABLE_DEVELOPER_TOOLS);
+                localStorage.removeItem(Configuration.ENABLE_DEVELOPER_TOOLS);
             }
             else {
-                sessionStorage.setItem(Configuration.ENABLE_DEVELOPER_TOOLS, value.toString());
+                localStorage.setItem(Configuration.ENABLE_DEVELOPER_TOOLS, value.toString());
             }
         }
 
