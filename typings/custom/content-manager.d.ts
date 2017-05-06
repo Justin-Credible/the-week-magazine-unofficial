@@ -73,6 +73,22 @@ declare module ContentManagerPlugin {
          * @param failureCallback The callback to be executed when the call fails.
          */
         getIssueContentXML(id: string, successCallback?: (contentXML: string) => void, failureCallback?: (error: string) => void): void;
+
+        /**
+         * Used to retrieve the total file size of all of the downloaded issues.
+         * 
+         * @param successCallback The callback to be executed when the call completes successfully.
+         * @param failureCallback The callback to be executed when the call fails.
+         */
+        getDownloadedIssuesSize(successCallback?: (size: number) => void, failureCallback?: (error: string) => void): void;
+
+        /**
+         * Used to delete all downloaded issues.
+         * 
+         * @param successCallback The callback to be executed when the call completes successfully.
+         * @param failureCallback The callback to be executed when the call fails.
+         */
+        deleteAllDownloadedIssues(successCallback?: (size: number) => void, failureCallback?: (error: string) => void): void;
     }
 
     interface DownloadedIssue {

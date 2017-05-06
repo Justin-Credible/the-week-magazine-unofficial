@@ -1,6 +1,7 @@
 package net.justin_credible.theweek;
 
 import android.content.Context;
+import android.content.pm.LauncherApps;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -113,6 +114,28 @@ public final class ContentManagerPlugin extends CordovaPlugin {
             }
             catch (Exception exception) {
                 callbackContext.error("ContentManagerPlugin.getIssueContentXML() uncaught exception: " + exception.getMessage());
+            }
+
+            return true;
+        }
+        else if (action.equals("getDownloadedIssuesSize")) {
+
+            try {
+                this.getDownloadedIssuesSize(callbackContext);
+            }
+            catch (Exception exception) {
+                callbackContext.error("ContentManagerPlugin.getDownloadedIssuesSize() uncaught exception: " + exception.getMessage());
+            }
+
+            return true;
+        }
+        else if (action.equals("deleteAllDownloadedIssues")) {
+
+            try {
+                this.deleteAllDownloadedIssues(callbackContext);
+            }
+            catch (Exception exception) {
+                callbackContext.error("ContentManagerPlugin.deleteAllDownloadedIssues() uncaught exception: " + exception.getMessage());
             }
 
             return true;
@@ -340,6 +363,56 @@ public final class ContentManagerPlugin extends CordovaPlugin {
         String contentXML = Utilities.readFile(contentXMLPath);
 
         callbackContext.success(contentXML);
+    }
+
+    private synchronized void getDownloadedIssuesSize(final CallbackContext callbackContext) throws Exception {
+
+        Context appContext = this.cordova.getActivity().getApplicationContext();
+        String baseStorageDir = appContext.getFilesDir().toString();
+
+        String issuesDirPath = Utilities.combinePaths(baseStorageDir, "issues");
+        File issuesDir = new File(issuesDirPath);
+
+        if (!issuesDir.exists() || !issuesDir.isDirectory()) {
+            callbackContext.success(0);
+            return;
+        }
+
+        long totalSize = Utilities.getFileSize(issuesDir);
+
+        callbackContext.success((int)totalSize);
+    }
+
+
+    private synchronized void deleteAllDownloadedIssues(final CallbackContext callbackContext) throws Exception {
+
+        if (currentDownloadStatus != null && currentDownloadStatus.inProgress) {
+            callbackContext.error("Cannot delete all issues because a download is currently in progress.");
+            return;
+        }
+
+        Context appContext = this.cordova.getActivity().getApplicationContext();
+        String baseStorageDir = appContext.getFilesDir().toString();
+
+        String issuesDirPath = Utilities.combinePaths(baseStorageDir, "issues");
+        final File issuesDir = new File(issuesDirPath);
+
+        if (!issuesDir.exists()) {
+            callbackContext.success();
+            return;
+        }
+
+        cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+                try {
+                    Utilities.deleteDir(issuesDir);
+                    callbackContext.success();
+                }
+                catch (Exception exception) {
+                    callbackContext.error("ContentManagerPlugin.deleteAllDownloadedIssues() exception during deletion: " + exception.getMessage());
+                }
+            }
+        });
     }
 
     //endregion

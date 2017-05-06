@@ -48,6 +48,7 @@ namespace JustinCredible.TheWeek.Controllers {
 
             // this.scope.$on(Constants.Events.APP_USER_LOGGED_IN, _.bind(this.app_userLoggedIn, this));
             // this.scope.$on(Constants.Events.APP_USER_LOGGED_OUT, _.bind(this.app_userLoggedOut, this));
+            this.scope.$on(Constants.Events.APP_ALL_ISSUES_DELETED, _.bind(this.app_allIssuesDeleted, this));
         }
 
         protected view_beforeEnter(event?: ng.IAngularEvent, eventArgs?: Interfaces.ViewEventArguments): void {
@@ -88,6 +89,11 @@ namespace JustinCredible.TheWeek.Controllers {
         //     this.refresh(true);
         // }
 
+        private app_allIssuesDeleted(event: ng.IAngularEvent): void {
+            this.viewModel.showSpinner = true;
+            this.refresh(true);
+        }
+
         private downloadStatus_intervalTick(): void {
 
             this.Plugins.contentManager.getDownloadStatus((status: ContentManagerPlugin.DownloadStatus) => {
@@ -120,6 +126,8 @@ namespace JustinCredible.TheWeek.Controllers {
                         if (result.success) {
                             this.Plugins.toast.showShortBottom("Download Complete");
                             this.Logger.info(MagazineListController.ID, "downloadStatus_intervalTick", "An issue was downloaded successfully.", result);
+
+                            this.scope.$emit(Constants.Events.APP_ISSUE_DOWNLOADED);
                         }
                         else {
                             this.Plugins.toast.showShortBottom("Download Failed");
@@ -167,6 +175,8 @@ namespace JustinCredible.TheWeek.Controllers {
                         this.viewModel.showSpinner = true;
                         this.refresh(true);
                         this.scope.$apply();
+
+                        this.scope.$emit(Constants.Events.APP_ISSUE_DELETED);
                     },
                     (error: any) => {
                         this.Plugins.spinner.activityStop();

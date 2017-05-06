@@ -136,6 +136,8 @@
                 getLastDownloadResult: _.bind(this.noOp, this),
                 deleteIssue: _.bind(this.noOp, this),
                 getIssueContentXML: _.bind(this.noOp, this),
+                getDownloadedIssuesSize: _.bind(this.noOp, this),
+                deleteAllDownloadedIssues: _.bind(this.noOp, this),
             };
         }
 

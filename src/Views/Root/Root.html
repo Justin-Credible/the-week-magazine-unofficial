@@ -29,6 +29,11 @@
 
                 <ion-item class="item-divider">Preferences</ion-item>
 
+                <ion-item ng-click="controller.deleteAllIssues_click()">
+                    Storage Used: {{viewModel.totalSpaceUsedDisplay}}
+                    <p>(Tap to delete all issues)</p>
+                </ion-item>
+
                 <label class="item item-toggle item-text-wrap">
                     Allow downloads only on Wi-Fi
                     <label class="toggle toggle-positive">

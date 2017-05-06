@@ -18,6 +18,8 @@ import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -110,6 +112,58 @@ public class Utilities {
             }
         }
     }
+
+    /**
+     * Returns the total file size of the given file (or all children if given a directory).
+     *
+     * http://stackoverflow.com/a/23443160
+     *
+     * @param file The file or directory to examine.
+     * @return The file size, in bytes.
+     */
+    public static long getFileSize(final File file) {
+
+        if (file == null || !file.exists()) {
+            return 0;
+        }
+
+        if (!file.isDirectory()) {
+            return file.length();
+        }
+
+        final List<File> dirs = new LinkedList<File>();
+
+        dirs.add(file);
+
+        long result=0;
+
+        while (!dirs.isEmpty())  {
+
+            final File dir = dirs.remove(0);
+
+            if(!dir.exists()) {
+                continue;
+            }
+
+            final File[] listFiles = dir.listFiles();
+
+            if (listFiles == null || listFiles.length == 0) {
+                continue;
+            }
+
+            for (final File child : listFiles) {
+
+                result += child.length();
+
+                if (child.isDirectory()) {
+                    dirs.add(child);
+                }
+            }
+        }
+
+        return result;
+    }
+
 
     /**
      * Used to extract the contents of a ZIP file to the given location.

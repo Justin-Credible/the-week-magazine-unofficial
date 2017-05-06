@@ -140,4 +140,26 @@ ContentManagerPlugin.getIssueContentXML = function getIssueContentXML(id, succes
     exec(successCallback, failureCallback, PLUGIN_ID, "getIssueContentXML", [ id ]);
 };
 
+/**
+ * Used to retrieve the total file size of all of the downloaded issues.
+ * 
+ * @param [function] successCallback - The success callback for this asynchronous function.
+ * @param [function] failureCallback - The failure callback for this asynchronous function; receives an error string.
+ */
+ContentManagerPlugin.getDownloadedIssuesSize = function getDownloadedIssuesSize(successCallback, failureCallback) {
+
+    exec(successCallback, failureCallback, PLUGIN_ID, "getDownloadedIssuesSize", []);
+};
+
+/**
+ * Used to delete all downloaded issues.
+ * 
+ * @param [function] successCallback - The success callback for this asynchronous function.
+ * @param [function] failureCallback - The failure callback for this asynchronous function; receives an error string.
+ */
+ContentManagerPlugin.deleteAllDownloadedIssues = function deleteAllDownloadedIssues(successCallback, failureCallback) {
+
+    exec(successCallback, failureCallback, PLUGIN_ID, "deleteAllDownloadedIssues", []);
+};
+
 module.exports = ContentManagerPlugin;
