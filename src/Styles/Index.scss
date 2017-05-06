@@ -1,4 +1,6 @@
 
+@import "Common/Colors";
+
 // Overrides/Variables
 @import "Overrides/NProgress";
 @import "Overrides/Ionic";
@@ -17,5 +19,6 @@
 @import "../Directives/Icon-Panel/Icon-Panel";
 
 // Views
+@import "../Views/Root/Root";
 @import "../Views/Magazine-List/Magazine-List";
 @import "../Views/Issue-Content-List/Issue-Content-List";
