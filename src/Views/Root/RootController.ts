@@ -64,7 +64,7 @@
 
             this.viewModel.applicationName = this.Configuration.values.appName;
             this.viewModel.downloadOnlyOnWiFi = this.Preferences.downloadOnlyOnWiFi;
-            this.viewModel.totalSpaceUsedDisplay = "(calculating...)";
+            this.viewModel.totalSpaceUsedDisplay = null;
             this.viewModel.isDebugMode = this.Configuration.debug;
             this.viewModel.isDeveloperMode = this.Configuration.enableDeveloperTools;
 
@@ -85,10 +85,12 @@
         }
 
         private app_issueDownloaded(event: ng.IAngularEvent) {
+            this.viewModel.totalSpaceUsedDisplay = null;
             this.calculateTotalSpaceUsedDisplay();
         }
 
         private app_issueDeleted(event: ng.IAngularEvent) {
+            this.viewModel.totalSpaceUsedDisplay = null;
             this.calculateTotalSpaceUsedDisplay();
         }
 
@@ -133,6 +135,10 @@
         //#region Controller Events
 
         protected deleteAllIssues_click(): void {
+
+            if (!this.viewModel.totalSpaceUsedDisplay) {
+                return;
+            }
 
             let message = "Are you sure you want to delete all of the downloaded issues?";
 

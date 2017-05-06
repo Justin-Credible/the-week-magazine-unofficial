@@ -30,8 +30,21 @@
                 <ion-item class="item-divider">Preferences</ion-item>
 
                 <ion-item ng-click="controller.deleteAllIssues_click()">
+
                     Storage Used: {{viewModel.totalSpaceUsedDisplay}}
-                    <p>(Tap to delete all issues)</p>
+
+                    <ion-spinner ng-if="!viewModel.totalSpaceUsedDisplay"
+                        style="display: inline-block">
+                    </ion-spinner>
+
+                    <p ng-if="!viewModel.totalSpaceUsedDisplay">
+                        (Calculating...)
+                    </p>
+
+                    <p ng-if="viewModel.totalSpaceUsedDisplay">
+                        (Tap to delete all issues)
+                    </p>
+
                 </ion-item>
 
                 <label class="item item-toggle item-text-wrap">
