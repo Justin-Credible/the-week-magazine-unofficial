@@ -13,13 +13,13 @@
         padding-top: 14px;
 
         .progress-bar-outer {
-            border: 1px solid #11c1f3;
+            border: 1px solid $theweek-red;
             display: block;
             height: 11px;
             position: relative;
 
             .progress-bar-inner {
-                background-color: #11c1f3;
+                background-color: $theweek-red;
                 display: inline-block;
                 height: 10px;
                 position: absolute;
