@@ -29,6 +29,18 @@
 
                 <ion-item class="item-divider">Preferences</ion-item>
 
+                <label class="item item-toggle item-text-wrap">
+                    Allow downloads only on Wi-Fi
+                    <label class="toggle toggle-positive">
+                        <input type="checkbox"
+                            ng-model="viewModel.downloadOnlyOnWiFi"
+                            ng-change="controller.downloadOnlyOnWiFi_change()">
+                        <div class="track">
+                            <div class="handle"></div>
+                        </div>
+                    </label>
+                </label>
+
                 <ion-item class="item-icon-left menu-close"
                     ui-sref="app.developer"
                     ng-show="viewModel.isDebugMode || viewModel.isDeveloperMode">

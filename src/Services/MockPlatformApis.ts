@@ -84,6 +84,12 @@
             };
         }
 
+        public getConnectionPlugin(): Connection {
+            return {
+                type: 0 // UNKNOWN
+            };
+        }
+
         public getSpinnerPlugin(): SpinnerPlugin.SpinnerPluginStatic {
             return {
                 activityStart: _.bind(this.spinner_activityStart, this),

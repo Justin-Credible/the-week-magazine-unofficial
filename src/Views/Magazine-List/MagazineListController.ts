@@ -15,6 +15,7 @@ namespace JustinCredible.TheWeek.Controllers {
                 "$ionicScrollDelegate",
                 Services.Logger.ID,
                 Services.Plugins.ID,
+                Services.Preferences.ID,
                 Services.UIHelper.ID,
                 Services.MagazineUtils.ID,
                 Services.MagazineDataSource.ID,
@@ -29,6 +30,7 @@ namespace JustinCredible.TheWeek.Controllers {
             private $ionicScrollDelegate: ionic.scroll.IonicScrollDelegate,
             private Logger: Services.Logger,
             private Plugins: Services.Plugins,
+            private Preferences: Services.Preferences,
             private UIHelper: Services.UIHelper,
             private MagazineUtils: Services.MagazineUtils,
             private MagazineDataSource: Services.MagazineDataSource) {
@@ -180,6 +182,11 @@ namespace JustinCredible.TheWeek.Controllers {
         }
 
         protected downloadIssue_click(issue: Models.MagazineIssue): void {
+
+            if (this.Preferences.downloadOnlyOnWiFi && this.Plugins.connection.type !== Connection.WIFI) {
+                this.UIHelper.alert("Your preference is to download issues on Wi-Fi only, and a Wi-Fi connection was not detected.", "Can't Download");
+                return;
+            }
 
             let message = `Are you sure you want to download the issue "${issue.title}" ?`;
 

@@ -40,6 +40,18 @@ namespace JustinCredible.TheWeek.Services {
         }
 
         /**
+         * Exposes an API for inspecting the network connection.
+         */
+        get connection(): Connection {
+            if (navigator.connection) {
+                return navigator.connection;
+            }
+            else {
+                return this.MockPlatformApis.getConnectionPlugin();
+            }
+        }
+
+        /**
          * Exposes an API for showing toast messages.
          */
         get toast(): ToastPlugin.ToastPluginStatic {

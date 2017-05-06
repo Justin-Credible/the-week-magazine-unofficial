@@ -57,6 +57,7 @@
             this.scope.$on(Constants.Events.HTTP_ERROR, _.bind(this.http_error, this));
 
             this.viewModel.applicationName = this.Configuration.values.appName;
+            this.viewModel.downloadOnlyOnWiFi = this.Preferences.downloadOnlyOnWiFi;
             this.viewModel.isDebugMode = this.Configuration.debug;
             this.viewModel.isDeveloperMode = this.Configuration.enableDeveloperTools;
         }
@@ -108,6 +109,10 @@
         //#endregion
 
         //#region Controller Methods
+
+        protected downloadOnlyOnWiFi_change(): void {
+            this.Preferences.downloadOnlyOnWiFi = this.viewModel.downloadOnlyOnWiFi;
+        }
 
         //#endregion
     }

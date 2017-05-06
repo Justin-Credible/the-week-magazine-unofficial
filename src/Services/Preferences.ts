@@ -18,10 +18,9 @@
 
         private static USER_ID = "USER_ID";
         private static TOKEN = "TOKEN";
+        private static DOWNLOAD_ONLY_ON_WIFI = "DOWNLOAD_ONLY_ON_WIFI";
 
         //#endregion
-
-        //#region User ID/Token
 
         get userId(): string {
             return localStorage.getItem(Preferences.USER_ID);
@@ -49,6 +48,17 @@
             }
         }
 
-        //#endregion
+        get downloadOnlyOnWiFi(): boolean {
+            return localStorage.getItem(Preferences.DOWNLOAD_ONLY_ON_WIFI) === "true";
+        }
+
+        set downloadOnlyOnWiFi(value: boolean) {
+            if (value == null) {
+                localStorage.removeItem(Preferences.DOWNLOAD_ONLY_ON_WIFI);
+            }
+            else {
+                localStorage.setItem(Preferences.DOWNLOAD_ONLY_ON_WIFI, value.toString());
+            }
+        }
     }
 }
