@@ -86,7 +86,7 @@ declare module ContentManagerPlugin {
     }
 
     interface DownloadStatus {
-        inProgress: boolean,
+        inProgress: boolean;
         id: string;
         statusText: string;
         percentage: number;
