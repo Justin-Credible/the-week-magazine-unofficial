@@ -183,6 +183,11 @@ namespace JustinCredible.TheWeek.Controllers {
 
         protected downloadIssue_click(issue: Models.MagazineIssue): void {
 
+            if (this._checkDownloadInterval != null) {
+                this.Plugins.toast.showShortBottom("Another download is already in progress.");
+                return;
+            }
+
             if (this.Preferences.downloadOnlyOnWiFi && this.Plugins.connection.type !== Connection.WIFI) {
                 this.UIHelper.alert("Your preference is to download issues on Wi-Fi only, and a Wi-Fi connection was not detected.", "Can't Download");
                 return;
