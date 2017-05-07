@@ -58,6 +58,13 @@ namespace JustinCredible.TheWeek.Controllers {
 
         //#region Controller Events
 
+        protected coverImage_click(): void {
+
+            if (this.viewModel.coverImageFilePath) {
+                this.Plugins.photoViewer.show(this.viewModel.coverImageFilePath);
+            }
+        }
+
         protected article_click(article: Interfaces.API.FeedEntry): void {
 
             let baseStoragePath = "file:///data/user/0/net.justin_credible.theweek/files";
@@ -111,6 +118,16 @@ namespace JustinCredible.TheWeek.Controllers {
                 this.viewModel.showSpinner = false;
                 this.Plugins.spinner.activityStop();
             });
+
+            this.Plugins.contentManager.getCoverImageFilePath(issueID,
+                (coverImageFilePath: string) => {
+
+                    this.viewModel.coverImageFilePath = coverImageFilePath;
+                    this.scope.$apply();
+
+                }, (error: any) => {
+                    this.Logger.error(IssueContentListController.ID, "refresh", "An error occurred while retrieving the issue cover image file path.", error);
+                });
         }
 
         private populateViewModel(issueContent: Interfaces.API.IssueContent): void {

@@ -141,6 +141,27 @@ ContentManagerPlugin.getIssueContentXML = function getIssueContentXML(id, succes
 };
 
 /**
+ * Used to retrieve a local file path to the cover image for a given issue.
+ * 
+ * @param string id - The ID of the issue to retrieve a cover image path for.
+ * @param [function] successCallback - The success callback for this asynchronous function.
+ * @param [function] failureCallback - The failure callback for this asynchronous function; receives an error string.
+ */
+ContentManagerPlugin.getCoverImageFilePath = function getCoverImageFilePath(id, successCallback, failureCallback) {
+
+    if (typeof(id) !== "string") {
+
+        if (failureCallback) {
+            failureCallback(new Error("An issue ID is required."));
+        }
+
+        return;
+    }
+
+    exec(successCallback, failureCallback, PLUGIN_ID, "getCoverImageFilePath", [ id ]);
+};
+
+/**
  * Used to retrieve the total file size of all of the downloaded issues.
  * 
  * @param [function] successCallback - The success callback for this asynchronous function.

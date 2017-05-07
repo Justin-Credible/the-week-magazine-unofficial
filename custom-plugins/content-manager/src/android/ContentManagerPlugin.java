@@ -118,6 +118,17 @@ public final class ContentManagerPlugin extends CordovaPlugin {
 
             return true;
         }
+        else if (action.equals("getCoverImageFilePath")) {
+
+            try {
+                this.getCoverImageFilePath(args, callbackContext);
+            }
+            catch (Exception exception) {
+                callbackContext.error("ContentManagerPlugin.getCoverImageFilePath() uncaught exception: " + exception.getMessage());
+            }
+
+            return true;
+        }
         else if (action.equals("getDownloadedIssuesSize")) {
 
             try {
@@ -363,6 +374,57 @@ public final class ContentManagerPlugin extends CordovaPlugin {
         String contentXML = Utilities.readFile(contentXMLPath);
 
         callbackContext.success(contentXML);
+    }
+
+    private synchronized void getCoverImageFilePath(final JSONArray args, final CallbackContext callbackContext) throws Exception {
+
+        final String issueID = args.getString(0);
+
+        if (issueID == null || issueID.equals("")) {
+            callbackContext.error("An issue ID is required to retrieve a cover image file path for an issue.");
+            return;
+        }
+
+        Context appContext = this.cordova.getActivity().getApplicationContext();
+        String baseStorageDir = appContext.getFilesDir().toString();
+
+        String issuesDirPath = Utilities.combinePaths(baseStorageDir, "issues");
+        final String issueDirPath = Utilities.combinePaths(issuesDirPath, issueID);
+
+        File issueDir = new File(issueDirPath);
+
+        if (!issueDir.exists() || !issueDir.isDirectory()) {
+            callbackContext.error(MessageFormat.format("An issue with ID '{0}' was not found.", issueID));
+            return;
+        }
+
+        final String contentXMLPath = Utilities.combinePaths(issueDirPath, "content.xml");
+        File contentXMLFile = new File(contentXMLPath);
+
+        if (!contentXMLFile.exists()) {
+            callbackContext.error(MessageFormat.format("An content.xml manifest for issue with ID '{0}' was not found.", issueID));
+            return;
+        }
+
+        cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+                try {
+                    String contentXML = Utilities.readFile(contentXMLPath);
+
+                    String coverPageID = Utilities.getCoverPageID(contentXML);
+
+                    String pagePath = MessageFormat.format("editions/{0}/data/{1}", issueID, coverPageID);
+                    String searchPath = Utilities.combinePaths(issueDirPath, pagePath);
+
+                    String imagePath = Utilities.findFileWithExtension(searchPath, "jpg");
+
+                    callbackContext.success(imagePath);
+                }
+                catch (Exception exception) {
+                    callbackContext.error("ContentManagerPlugin.getCoverImageFilePath() exception during image path acquisition: " + exception.getMessage());
+                }
+            }
+        });
     }
 
     private synchronized void getDownloadedIssuesSize(final CallbackContext callbackContext) throws Exception {

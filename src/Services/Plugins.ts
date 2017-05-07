@@ -130,6 +130,19 @@ namespace JustinCredible.TheWeek.Services {
         }
 
         /**
+         * Exposes an API for showing full screen image previews.
+         */
+        get photoViewer(): PhotoViewerPlugin.PhotoViewerPluginStatic {
+
+            if (window.PhotoViewer) {
+                return window.PhotoViewer;
+            }
+            else {
+                return this.MockPlatformApis.getPhotoViewerPlugin();
+            }
+        }
+
+        /**
          * Exposes the Content Manager for working with issue data.
          */
         get contentManager(): ContentManagerPlugin.ContentManagerPluginStatic {

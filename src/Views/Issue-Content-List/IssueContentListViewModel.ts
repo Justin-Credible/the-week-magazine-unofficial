@@ -4,6 +4,7 @@ namespace JustinCredible.TheWeek.ViewModels {
         public showSpinner: boolean;
         public loadError: boolean;
 
+        public coverImageFilePath: string;
         public coverImageURL: string;
 
         /**

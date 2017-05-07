@@ -60,7 +60,8 @@
     "cordova-plugin-spinner@1.0.0",
     "ionic-plugin-keyboard@1.0.7",
     "cordova-plugin-x-toast@2.2.1",
-    "cordova-universal-clipboard@0.1.0"
+    "cordova-universal-clipboard@0.1.0",
+    "com-sarriaroman-photoviewer@1.1.2"
   ],
   "cordovaPlatforms": [
     "android"

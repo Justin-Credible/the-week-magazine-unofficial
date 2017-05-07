@@ -32,8 +32,14 @@
         <div class="list"
             ng-hide="viewModel.loadError || viewModel.showSpinner">
 
-            <div class="item cover-image">
-                <img ng-src="{{viewModel.coverImageURL}}">
+            <div class="item cover-image"
+                ng-click="controller.coverImage_click()">
+
+                <img ng-if="viewModel.coverImageFilePath"
+                    ng-src="{{viewModel.coverImageFilePath}}">
+
+                <img ng-if="!viewModel.coverImageFilePath"
+                    ng-src="{{viewModel.coverImageURL}}">
             </div>
 
             <div class="item item-divider"

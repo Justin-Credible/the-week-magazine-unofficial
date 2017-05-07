@@ -2,6 +2,7 @@ package net.justin_credible.theweek;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import java.io.BufferedInputStream;
@@ -25,6 +26,10 @@ import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 public class Utilities {
 
@@ -111,6 +116,98 @@ public class Utilities {
                 writer.close();
             }
         }
+    }
+
+    /**
+     * Used to recursively search the given directory for a file with the given file extension.
+     *
+     * @param searchPath The directory to search.
+     * @param extension The file extension to look for.
+     * @return The first matching file with the given extension (if one is found).
+     * @throws Exception
+     */
+    public static String findFileWithExtension(String searchPath, String extension) throws Exception {
+
+        File searchPathDir = new File(searchPath);
+
+        File result = findFileWithExtension(searchPathDir, extension);
+
+        if (result != null && result.exists()) {
+            return result.getAbsolutePath();
+        }
+
+        return null;
+    }
+
+    /**
+     * Used to search a directory recursively to find a file with a ".jpg" extension.
+     *
+     * @param searchPathDir The directory to search.
+     * @param extension The file extension to look for.
+     * @return The first matching file with the given extension (if one is found).
+     */
+    public static File findFileWithExtension(File searchPathDir, String extension) {
+
+        if (searchPathDir == null) {
+            return null;
+        }
+
+        if (!searchPathDir.isDirectory()) {
+            return null;
+        }
+
+        for (File childObject : searchPathDir.listFiles()) {
+
+            if (childObject.isDirectory()) {
+
+                File result = findFileWithExtension(childObject, extension);
+
+                if (result != null) {
+                    return result;
+                }
+            }
+
+            if (childObject.isFile()) {
+
+                String childExtension = getFileExtension(childObject);
+
+                if (childExtension != null && childExtension.toLowerCase().equals(extension)) {
+                    return childObject;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the file extension for the given file (if one exists).
+     *
+     * @param file The file to examine.
+     * @return The extension of the file (if it has one).
+     */
+    public static String getFileExtension(File file) {
+
+        if (file == null) {
+            return null;
+        }
+
+        if (!file.isFile()) {
+            return null;
+        }
+
+        String fileName = file.getName();
+
+        String extension = null;
+
+        int dotLocation = fileName.lastIndexOf(".");
+        int lastDirSeparatorLocation = fileName.lastIndexOf("/");
+
+        if (dotLocation > lastDirSeparatorLocation) {
+            extension = fileName.substring(dotLocation + 1);
+        }
+
+        return extension;
     }
 
     /**
@@ -218,6 +315,85 @@ public class Utilities {
         finally {
             zis.close();
         }
+    }
+
+    /**
+     * Used to find the article ID for the cover page.
+     *
+     * @param xml The content.xml file contents to parse.
+     * @return An article page ID for the cover page (if found).
+     * @throws Exception
+     */
+    public static String getCoverPageID(String xml) throws Exception {
+
+        Document document = Utilities.getDocument(xml);
+
+        XPathFactory xpathFactory = XPathFactory.newInstance();
+        XPath xpath = xpathFactory.newXPath();
+
+        XPathExpression entryExpression = xpath.compile("/feed/entry");
+        NodeList entries = (NodeList) entryExpression.evaluate(document, XPathConstants.NODESET);
+
+        // Loop over each of the entry nodes.
+        ENTRY_LOOP: for (int i = 0; i < entries.getLength(); i++) {
+
+            Node entryNode = entries.item(i);
+
+            NodeList childNodes = entryNode.getChildNodes();
+
+            String entryID = null;
+            Node coverPageNode = null;
+
+            // Loop over each of the child nodes to try and find the cover page node.
+            for (int j = 0; j < childNodes.getLength(); j++) {
+
+                // Once we've determined that this is a cover node and we've obtained its
+                // entry ID, then there is no need to continue iterating the link nodes.
+                if (entryID != null && coverPageNode != null) {
+                    break;
+                }
+
+                Node childNode = childNodes.item(j);
+
+                // If this is the ID node, save off the entry ID.
+                if (childNode.getNodeName().equals("id")) {
+                    entryID = childNode.getTextContent();
+                    continue;
+                }
+
+                // We only care about category nodes.
+                if (childNode.getNodeName().equals("category")) {
+
+                    String scheme = Utilities.getAttributeValue("scheme", childNode);
+
+                    if (scheme != null && scheme.equals("http://schema.pugpig.com/pagetype")) {
+
+                        String term = Utilities.getAttributeValue("term", childNode);
+
+                        if (term != null && term.equals("cover")) {
+                            // This is the cover page; save a reference to it and continue
+                            // iterating child nodes to find the entry ID.
+                            coverPageNode = childNode;
+                        }
+                        else {
+                            // If this isn't a cover page type, then there is no reason to
+                            // continue inspecting this entry node.
+                            break ENTRY_LOOP;
+                        }
+                    }
+                }
+            }
+
+            // If we found a cover page node, extract the page ID from the entry ID.
+            // Entry IDs are in the format "com.dennis.theweek.issue.issuepage-51316".
+            if (entryID != null && coverPageNode != null) {
+
+                int issuePageLocation = entryID.lastIndexOf("issuepage-");
+                return entryID.substring(issuePageLocation + ("issuepage-".length()));
+            }
+        }
+
+        return null;
     }
 
     /**

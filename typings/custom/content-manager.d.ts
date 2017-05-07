@@ -75,6 +75,15 @@ declare module ContentManagerPlugin {
         getIssueContentXML(id: string, successCallback?: (contentXML: string) => void, failureCallback?: (error: string) => void): void;
 
         /**
+         * Used to retrieve a local file path to the cover image for a given issue.
+         * 
+         * @param id The ID of the issue to retrieve a cover image path for.
+         * @param successCallback The callback to be executed when the call completes successfully.
+         * @param failureCallback The callback to be executed when the call fails.
+         */
+        getCoverImageFilePath(id: string, successCallback?: (coverImageFilePath: string) => void, failureCallback?: (error: string) => void): void;
+
+        /**
          * Used to retrieve the total file size of all of the downloaded issues.
          * 
          * @param successCallback The callback to be executed when the call completes successfully.
