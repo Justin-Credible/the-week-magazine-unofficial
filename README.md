@@ -1,6 +1,8 @@
 Unofficial app for _The Week_ magazine
 ===
 
+![showcase](resources/screenshots/showcase.png)
+
 This is an unofficial app for _[The Week](https://theweek.com/)_ magazine.
 
 The [official Android app](https://play.google.com/store/apps/details?id=com.dennis.theweek.us&hl=en) stopped working as of Android 6.0 (marshmallow). It simply crashes on startup. I am not the only one to experience this, as can be seen in the Google Play store reviews.
