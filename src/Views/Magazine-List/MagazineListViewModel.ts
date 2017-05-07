@@ -5,6 +5,9 @@ namespace JustinCredible.TheWeek.ViewModels {
         public isRefreshing: boolean;
         public loadError: boolean;
 
+        public showDownloadedOnly: boolean;
+        public showFutureIssues: boolean;
+
         public issues: Models.MagazineIssue[];
 
         public downloadedIssueMap: Interfaces.Dictionary<boolean>;

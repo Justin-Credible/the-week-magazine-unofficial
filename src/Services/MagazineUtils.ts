@@ -75,6 +75,11 @@ namespace JustinCredible.TheWeek.Services {
                     issue.imageURL = this.buildImageURL(imageLink._href);
                 }
 
+                issue.updated = moment(entry.updated);
+                issue.published = moment(entry.published);
+
+                issue.isFutureIssue = issue.published.isAfter(moment());
+
                 return issue;
             }
             catch (error) {

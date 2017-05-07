@@ -6,5 +6,10 @@ namespace JustinCredible.TheWeek.Models {
         public summary: string;
         public imageURL: string;
         public size: string;
+
+        public updated: moment.Moment;
+        public published: moment.Moment;
+
+        public isFutureIssue: boolean;
     }
 }

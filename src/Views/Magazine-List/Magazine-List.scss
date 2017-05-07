@@ -1,6 +1,15 @@
 
 .magazine-list {
 
+    .item {
+        h2 {
+            span {
+                color: $theweek-red;
+                font-weight: bold;
+            }
+        }
+    }
+
     .issue-thumbnail,
     .item-thumbnail-left > img:first-child {
         width: auto;

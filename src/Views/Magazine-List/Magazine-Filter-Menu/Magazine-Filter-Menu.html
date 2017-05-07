@@ -1,0 +1,24 @@
+
+<ion-popover-view ng-controller="MagazineFilterMenuController" style="height: 115px; width: 240px;">
+    <ion-content>
+        <ion-list>
+
+            <ion-item
+                class="item-icon-right"
+                ng-click="controller.showDownloadedOnly_click()">
+                <i class="icon"
+                    ng-class="{ 'ion-checkmark-round': viewModel.showDownloadedOnly }"></i>
+                Show Downloaded Only
+            </ion-item>
+
+            <ion-item
+                class="item-icon-right"
+                ng-click="controller.showFutureIssues_click()">
+                <i class="icon"
+                    ng-class="{ 'ion-checkmark-round': viewModel.showFutureIssues }"></i>
+                Show Future Issues
+            </ion-item>
+
+        </ion-list>
+    </ion-content>
+</ion-popover-view>

@@ -39,6 +39,7 @@ namespace JustinCredible.TheWeek.Controllers {
 
         //#endregion
 
+        private _filterMenu: ionic.popover.IonicPopoverController;
         private _checkDownloadInterval: ng.IPromise<void>;
 
         //#region BaseController Overrides
@@ -54,9 +55,19 @@ namespace JustinCredible.TheWeek.Controllers {
         protected view_beforeEnter(event?: ng.IAngularEvent, eventArgs?: Interfaces.ViewEventArguments): void {
             super.view_beforeEnter(event, eventArgs);
 
+            this.UIHelper.createPopover(MagazineFilterMenuController.ID)
+                .then((popover: ionic.popover.IonicPopoverController) => {
+
+                this._filterMenu = popover;
+                this._filterMenu.scope.$on("filtersChanged", _.bind(this.filterMenu_filtersChanged, this));
+            });
+
             this.viewModel.loadError = false;
             this.viewModel.showSpinner = false;
             this.viewModel.isRefreshing = false;
+
+            this.viewModel.showDownloadedOnly = false;
+            this.viewModel.showFutureIssues = false;
 
             this.viewModel.showSpinner = true;
             this.refresh();
@@ -88,6 +99,12 @@ namespace JustinCredible.TheWeek.Controllers {
         //     this.viewModel.showSpinner = true;
         //     this.refresh(true);
         // }
+
+        private filterMenu_filtersChanged($event: ng.IAngularEvent, filters: ViewModels.MagazineFilterMenuViewModel): void {
+
+            this.viewModel.showDownloadedOnly = filters.showDownloadedOnly;
+            this.viewModel.showFutureIssues = filters.showFutureIssues;
+        }
 
         private app_allIssuesDeleted(event: ng.IAngularEvent): void {
             this.viewModel.showSpinner = true;
@@ -146,6 +163,17 @@ namespace JustinCredible.TheWeek.Controllers {
 
         protected refresher_refresh(): void {
             this.refresh(true);
+        }
+
+        protected filter_click(event: ng.IAngularEvent) {
+
+            let filters = new ViewModels.MagazineFilterMenuViewModel();
+            filters.showDownloadedOnly = this.viewModel.showDownloadedOnly;
+            filters.showFutureIssues = this.viewModel.showFutureIssues;
+
+            this._filterMenu.scope.$broadcast("setFilters", filters);
+
+            this._filterMenu.show(event);
         }
 
         protected readIssue_click(issue: Models.MagazineIssue): void {
@@ -323,7 +351,9 @@ namespace JustinCredible.TheWeek.Controllers {
             this.viewModel.issues = [];
 
             // Limit to the last two months (one issue per week).
-            let entries = _.take(feed.entry, 8);
+            // Set to 9 instead of 8 because there is usually also an "in-progress"
+            // issue with a publish date in the future.
+            let entries = _.take(feed.entry, 9);
 
             for (let entry of entries) {
 

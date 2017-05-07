@@ -4,6 +4,10 @@
         <button menu-toggle="left" class="button button-icon icon ion-navicon phone-both-tablet-portrait"></button>
     </ion-nav-buttons>
 
+    <ion-nav-buttons side="right">
+        <button class="button icon ion-search" ng-click="controller.filter_click($event)"></button>
+    </ion-nav-buttons>
+
     <ion-nav-title>
         Issues
     </ion-nav-title>
@@ -51,8 +55,14 @@
             <div ng-repeat="issue in viewModel.issues"
                 ng-if="viewModel.downloadedIssueMap[issue.id]"
                 class="item item-thumbnail-left item-text-wrap">
+
                 <img ng-src="{{issue.imageURL}}" class="issue-thumbnail">
-                <h2>{{issue.title}}</h2>
+
+                <h2>
+                    {{issue.title}}
+                    <span ng-if="issue.isFutureIssue">(Future Issue)</span>
+                </h2>
+
                 <p>{{issue.summary}}</p>
 
                 <div class="row">
@@ -72,15 +82,23 @@
 
             </div>
 
-            <div class="item item-divider">
+            <div class="item item-divider"
+                ng-if="!viewModel.showDownloadedOnly">
                 Available Issues
             </div>
 
             <div ng-repeat="issue in viewModel.issues"
-                ng-if="!viewModel.downloadedIssueMap[issue.id]"
+                ng-if="!viewModel.showDownloadedOnly && !viewModel.downloadedIssueMap[issue.id]"
+                ng-hide="!viewModel.showFutureIssues && issue.isFutureIssue"
                 class="item item-thumbnail-left item-text-wrap">
+
                 <img ng-src="{{issue.imageURL}}" class="issue-thumbnail">
-                <h2>{{issue.title}}</h2>
+
+                <h2>
+                    {{issue.title}}
+                    <span ng-if="issue.isFutureIssue">(Future Issue)</span>
+                </h2>
+
                 <p>{{issue.summary}}</p>
 
                 <button class="button button-block button-outline button-positive ion-android-download icon-left"
