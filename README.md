@@ -18,3 +18,5 @@ I am not affiliated with _The Week_ in any way.
 Pre-built Android APKs are available on the [releases page](https://github.com/Justin-Credible/the-week-magazine-unofficial/releases).
 
 While this app is built with cross-platform tech (Ionic/Cordova), a portion of it uses a native plugin which I've only written for Android. Since the official iOS app still works, there is no reason to make this app work on iOS for now.
+
+As a learning exercise, I'm also porting this app to Dart/Flutter which can be found [here](https://github.com/Justin-Credible/the-week-magazine-unofficial).
