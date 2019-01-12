@@ -13,6 +13,8 @@ Therefore, I have created this unofficial app so Android users can continue to r
 
 I am not affiliated with _The Week_ in any way.
 
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 ## Releases
 
 Pre-built Android APKs are available on the [releases page](https://github.com/Justin-Credible/the-week-magazine-unofficial/releases).
